@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "aielectricitymaps"
+version = "0.1.0"
+description = "Async Python 3 wrapper for Electricity maps"
+authors = ["Jan-Philipp Benecke <jan-philipp@bnck.me>"]
+repository = "https://github.com/jpbede/aioelectricitymaps"
+license = "MIT License"
+readme = "README.md"
+packages = [
+  { include = "aioelectricitymaps" }
+]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+aiohttp = "^3.8.5"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.2"
+pytest-asyncio = "^0.21.1"
+black = "^23.1.0"
+pre-commit = ">=2.21,<4.0"
+pytest-httpx = "^0.26.0"
+mypy = "^1.4.1"
+ruff = "^0.0.291"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
