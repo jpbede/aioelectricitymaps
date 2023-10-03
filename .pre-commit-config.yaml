@@ -14,12 +14,6 @@ repos:
       - id: poetry-check
       - id: poetry-lock
 
-  - repo: https://github.com/asottile/pyupgrade
-    rev: v3.14.0
-    hooks:
-      - id: pyupgrade
-        args: [--py311-plus]
-
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.0.292
     hooks:
