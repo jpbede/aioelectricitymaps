@@ -7,8 +7,8 @@ from aresponses import ResponsesMockServer
 
 from aioelectricitymaps import ElectricityMaps
 from aioelectricitymaps.exceptions import (
-    ElectricityMapsError,
     ElectricityMapsDecodeError,
+    ElectricityMapsError,
 )
 from tests import load_fixture
 

@@ -1,7 +1,7 @@
 """Models to the electricitymaps.com API."""
 from dataclasses import dataclass, field
 
-from dataclasses_json import LetterCase, DataClassJsonMixin, config
+from dataclasses_json import DataClassJsonMixin, LetterCase, config
 
 
 @dataclass(slots=True, frozen=True)

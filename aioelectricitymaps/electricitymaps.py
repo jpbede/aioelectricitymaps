@@ -8,9 +8,9 @@ from typing import Any
 from aiohttp import ClientSession
 
 from .const import ApiEndpoints
-from .exceptions import ElectricityMapsError, ElectricityMapsDecodeError
-from .models import CarbonIntensityResponse, Zone
+from .exceptions import ElectricityMapsDecodeError, ElectricityMapsError
 from .marshmallow import ZoneList
+from .models import CarbonIntensityResponse, Zone
 
 
 @dataclass
