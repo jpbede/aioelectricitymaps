@@ -8,8 +8,9 @@ from typing import Any
 from aiohttp import ClientSession
 
 from .const import ApiEndpoints
-from .exceptions import ElectricityMapsError
-from .models import CarbonIntensityResponse
+from .exceptions import ElectricityMapsError, ElectricityMapsDecodeError
+from .models import CarbonIntensityResponse, Zone
+from .marshmallow import ZoneList
 
 
 @dataclass
@@ -35,9 +36,13 @@ class ElectricityMaps:
                 response.raise_for_status()
                 return await response.json()
         except json.JSONDecodeError as exception:
-            raise ElectricityMapsError(
+            raise ElectricityMapsDecodeError(
                 f"JSON decoding failed: {exception}"
             ) from exception
+        except Exception as exc:
+            raise ElectricityMapsError(
+                f"Unknown error occurred while fetching data: {exc}"
+            ) from exc
 
     async def latest_carbon_intensity_by_coordinates(
         self, lat: str, lon: str
@@ -46,17 +51,19 @@ class ElectricityMaps:
         result = await self._get(
             ApiEndpoints.CARBON_INTENSITY, {"lat": lat, "lon": lon}
         )
-        return CarbonIntensityResponse(**result)
+        return CarbonIntensityResponse.from_dict(result)
 
     async def latest_carbon_intensity_by_country_code(
         self, code: str
     ) -> CarbonIntensityResponse:
         """Get carbon intensity by country code."""
         result = await self._get(ApiEndpoints.CARBON_INTENSITY, {"countryCode": code})
-        return CarbonIntensityResponse(**result)
+        return CarbonIntensityResponse.from_dict(result)
 
-    async def zones(self) -> Any:
-        return await self._get(ApiEndpoints.ZONES)
+    async def zones(self) -> dict[str, Zone]:
+        """Get list of zones where carbon intensity is available."""
+        result = await self._get(ApiEndpoints.ZONES)
+        return ZoneList.from_dict({"zones": result}).zones
 
     async def close(self) -> None:
         """Close open client session."""

@@ -13,16 +13,39 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.10"
 aiohttp = "^3.8.5"
+pytest = "^7.4.2"
+dataclasses-json = "^0.6.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.2"
 pytest-asyncio = "^0.21.1"
 black = "^23.1.0"
 pre-commit = ">=2.21,<4.0"
-pytest-httpx = "^0.26.0"
 mypy = "^1.4.1"
 ruff = "^0.0.291"
+aresponses = "^2.1.6"
+pytest-cov = "^4.1.0"
+syrupy = "^4.5.0"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+target-version = ["py311"]
+
+[tool.ruff]
+target-version = "py311"
+
+select = [
+    "C",  # complexity
+    "E",  # pycodestyle
+    "F",  # pyflakes/autoflake
+    "I",  # isort
+    "UP",  # pyupgrade
+    "W",  # pycodestyle
+]
+
+ignore = [
+  "E501"
+]

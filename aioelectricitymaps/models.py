@@ -1,24 +1,38 @@
 """Models to the electricitymaps.com API."""
-from typing import TypedDict
+from dataclasses import dataclass, field
+
+from typing import Optional
+
+from dataclasses_json import LetterCase, DataClassJsonMixin, config
 
 
-class CarbonIntensityData(TypedDict):
+@dataclass(slots=True, frozen=True)
+class CarbonIntensityData(DataClassJsonMixin):
     """Data field."""
 
-    carbonIntensity: float
-    fossilFuelPercentage: float
+    carbon_intensity: float = field(metadata=config(letter_case=LetterCase.CAMEL))
+    fossil_fuel_percentage: float = field(metadata=config(letter_case=LetterCase.CAMEL))
 
 
-class CarbonIntensityUnit(TypedDict):
+@dataclass(slots=True, frozen=True)
+class CarbonIntensityUnit(DataClassJsonMixin):
     """Unit field."""
 
-    carbonIntensity: str
+    carbon_intensity: str = field(metadata=config(letter_case=LetterCase.CAMEL))
 
 
-class CarbonIntensityResponse(TypedDict):
+@dataclass(slots=True, frozen=True)
+class CarbonIntensityResponse(DataClassJsonMixin):
     """API response."""
 
-    status: str
-    countryCode: str
+    status: str = field(metadata=config(letter_case=LetterCase.CAMEL))
+    country_code: str = field(metadata=config(letter_case=LetterCase.CAMEL))
     data: CarbonIntensityData
     units: CarbonIntensityUnit
+
+
+@dataclass(slots=True, frozen=True)
+class Zone(DataClassJsonMixin):
+    """Zone for carbon intensity API."""
+    zone_name: str = field(metadata=config(letter_case=LetterCase.CAMEL))
+    country_name: Optional[str] = field(metadata=config(letter_case=LetterCase.CAMEL), default=None)
