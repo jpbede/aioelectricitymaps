@@ -14,6 +14,13 @@ from tests import load_fixture
 
 
 @pytest.mark.asyncio
+async def test_asyncio_protocol(mock_response) -> None:
+    """Test the asyncio protocol implementation."""
+    async with ElectricityMaps(token="abc123") as em:
+        assert await em.latest_carbon_intensity_by_country_code("DE")
+
+
+@pytest.mark.asyncio
 async def test_json_request_without_session(mock_response, snapshot) -> None:
     """Test JSON response is handled correctly without given session."""
     em = ElectricityMaps(token="abc123")
