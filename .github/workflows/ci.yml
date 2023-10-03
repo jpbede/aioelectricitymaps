@@ -53,7 +53,7 @@ jobs:
           poetry install
       - name: "Run tests"
         run: |
-          poetry run pytest --cov pydiscovergy --cov-report xml
+          poetry run pytest --cov aioelectricitymaps --cov-report xml
       - name: "Upload coverage to Codecov"
         uses: "codecov/codecov-action@v3"
         with:
