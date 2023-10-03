@@ -32,5 +32,8 @@ class CarbonIntensityResponse(DataClassJsonMixin):
 @dataclass(slots=True, frozen=True)
 class Zone(DataClassJsonMixin):
     """Zone for carbon intensity API."""
+
     zone_name: str = field(metadata=config(letter_case=LetterCase.CAMEL))
-    country_name: str | None = field(metadata=config(letter_case=LetterCase.CAMEL), default=None)
+    country_name: str | None = field(
+        metadata=config(letter_case=LetterCase.CAMEL), default=None
+    )

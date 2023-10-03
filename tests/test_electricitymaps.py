@@ -6,7 +6,10 @@ import pytest
 from aresponses import ResponsesMockServer
 
 from aioelectricitymaps import ElectricityMaps
-from aioelectricitymaps.exceptions import ElectricityMapsError, ElectricityMapsDecodeError
+from aioelectricitymaps.exceptions import (
+    ElectricityMapsError,
+    ElectricityMapsDecodeError,
+)
 from tests import load_fixture
 
 
@@ -31,10 +34,10 @@ async def test_carbon_intensity_by_coordinates(mock_response, snapshot) -> None:
     async with aiohttp.ClientSession() as session:
         em = ElectricityMaps(token="abc123", session=session)
         assert (
-                await em.latest_carbon_intensity_by_coordinates(
-                    lat="53.1357012", lon="8.2024685"
-                )
-                == snapshot
+            await em.latest_carbon_intensity_by_coordinates(
+                lat="53.1357012", lon="8.2024685"
+            )
+            == snapshot
         )
 
 
