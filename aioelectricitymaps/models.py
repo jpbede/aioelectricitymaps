@@ -1,8 +1,6 @@
 """Models to the electricitymaps.com API."""
 from dataclasses import dataclass, field
 
-from typing import Optional
-
 from dataclasses_json import LetterCase, DataClassJsonMixin, config
 
 
@@ -35,4 +33,4 @@ class CarbonIntensityResponse(DataClassJsonMixin):
 class Zone(DataClassJsonMixin):
     """Zone for carbon intensity API."""
     zone_name: str = field(metadata=config(letter_case=LetterCase.CAMEL))
-    country_name: Optional[str] = field(metadata=config(letter_case=LetterCase.CAMEL), default=None)
+    country_name: str | None = field(metadata=config(letter_case=LetterCase.CAMEL), default=None)
