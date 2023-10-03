@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "aielectricitymaps"
+name = "aioelectricitymaps"
 version = "0.1.0"
 description = "Async Python 3 wrapper for Electricity maps"
 authors = ["Jan-Philipp Benecke <jan-philipp@bnck.me>"]
