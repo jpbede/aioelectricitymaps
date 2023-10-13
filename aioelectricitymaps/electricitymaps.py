@@ -34,7 +34,7 @@ class ElectricityMaps:
             self._close_session = True
 
         headers = {"auth-token": self.token}
-        parsed = None
+        parsed = {}
 
         try:
             async with self.session.get(
