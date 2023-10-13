@@ -8,17 +8,23 @@ from typing import Any
 from aiohttp import ClientSession
 
 from .const import ApiEndpoints
-from .exceptions import ElectricityMapsDecodeError, ElectricityMapsError
+from .exceptions import ElectricityMapsDecodeError, ElectricityMapsError, InvalidToken
 from .marshmallow import ZoneList
 from .models import CarbonIntensityResponse, Zone
 
 
 @dataclass
 class ElectricityMaps:
-    token: str
-    session: ClientSession | None = None
-
     _close_session: bool = False
+    _is_legacy_token: bool = False
+
+    def __init__(self, token: str, session: ClientSession | None = None) -> None:
+        """Init the Electricity maps wrapper."""
+        self.token = token
+        self.session = session
+
+        if len(token) < 10:
+            self._is_legacy_token = True
 
     async def _get(self, url: str, params: dict[str, Any] | None = None) -> Any:
         """Execute a GET request against the API."""
@@ -28,13 +34,13 @@ class ElectricityMaps:
             self._close_session = True
 
         headers = {"auth-token": self.token}
+        parsed = None
 
         try:
             async with self.session.get(
                 url, headers=headers, params=params
             ) as response:
-                response.raise_for_status()
-                return await response.json()
+                parsed = await response.json()
         except json.JSONDecodeError as exception:
             raise ElectricityMapsDecodeError(
                 f"JSON decoding failed: {exception}"
@@ -43,21 +49,41 @@ class ElectricityMaps:
             raise ElectricityMapsError(
                 f"Unknown error occurred while fetching data: {exc}"
             ) from exc
+        finally:
+            # check for invalid token
+            if "message" in parsed and response.status == 404:
+                if (
+                    "No data product found" in parsed["message"]
+                    or "Invalid authentication" in parsed["message"]
+                ):
+                    raise InvalidToken
+
+        return parsed
 
     async def latest_carbon_intensity_by_coordinates(
         self, lat: str, lon: str
     ) -> CarbonIntensityResponse:
         """Get carbon intensity by coordinates."""
-        result = await self._get(
-            ApiEndpoints.CARBON_INTENSITY, {"lat": lat, "lon": lon}
-        )
+        if self._is_legacy_token:
+            result = await self._get(
+                ApiEndpoints.LEGACY_CARBON_INTENSITY, {"lat": lat, "lon": lon}
+            )
+        else:
+            result = await self._get(
+                ApiEndpoints.CARBON_INTENSITY, {"lat": lat, "lon": lon}
+            )
         return CarbonIntensityResponse.from_dict(result)
 
     async def latest_carbon_intensity_by_country_code(
         self, code: str
     ) -> CarbonIntensityResponse:
         """Get carbon intensity by country code."""
-        result = await self._get(ApiEndpoints.CARBON_INTENSITY, {"countryCode": code})
+        if self._is_legacy_token:
+            result = await self._get(
+                ApiEndpoints.LEGACY_CARBON_INTENSITY, {"countryCode": code}
+            )
+        else:
+            result = await self._get(ApiEndpoints.CARBON_INTENSITY, {"zone": code})
         return CarbonIntensityResponse.from_dict(result)
 
     async def zones(self) -> dict[str, Zone]:

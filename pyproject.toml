@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "aioelectricitymaps"
-version = "0.1.0"
+version = "0.1.1"
 description = "Async Python 3 wrapper for Electricity maps"
 authors = ["Jan-Philipp Benecke <jan-philipp@bnck.me>"]
 repository = "https://github.com/jpbede/aioelectricitymaps"
