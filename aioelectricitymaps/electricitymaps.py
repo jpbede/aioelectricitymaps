@@ -23,7 +23,7 @@ class ElectricityMaps:
         self.token = token
         self.session = session
 
-        if len(token) < 10:
+        if len(token) <= 20:
             self._is_legacy_token = True
 
     async def _get(self, url: str, params: dict[str, Any] | None = None) -> Any:
