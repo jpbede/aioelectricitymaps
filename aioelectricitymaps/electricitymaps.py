@@ -2,29 +2,33 @@
 from __future__ import annotations
 
 import json
+import logging
 from dataclasses import dataclass
 from typing import Any
 
 from aiohttp import ClientSession
 
 from .const import ApiEndpoints
-from .exceptions import ElectricityMapsDecodeError, ElectricityMapsError, InvalidToken
+from .decorators import retry_legacy
+from .exceptions import (
+    ElectricityMapsDecodeError,
+    ElectricityMapsError,
+    InvalidToken,
+    SwitchedToLegacyAPI,
+)
 from .marshmallow import ZoneList
 from .models import CarbonIntensityResponse, Zone
+
+_LOGGER = logging.Logger(__name__)
 
 
 @dataclass
 class ElectricityMaps:
+    token: str
+    session: ClientSession | None = None
+
     _close_session: bool = False
     _is_legacy_token: bool = False
-
-    def __init__(self, token: str, session: ClientSession | None = None) -> None:
-        """Init the Electricity maps wrapper."""
-        self.token = token
-        self.session = session
-
-        if len(token) <= 20:
-            self._is_legacy_token = True
 
     async def _get(self, url: str, params: dict[str, Any] | None = None) -> Any:
         """Execute a GET request against the API."""
@@ -51,15 +55,24 @@ class ElectricityMaps:
             ) from exc
         finally:
             # check for invalid token
-            if "message" in parsed and response.status == 404:
-                if (
+            if (
+                "message" in parsed
+                and response.status == 404
+                and (
                     "No data product found" in parsed["message"]
                     or "Invalid authentication" in parsed["message"]
-                ):
-                    raise InvalidToken
+                )
+            ):
+                # enable legacy mode and let the function recalled by the decorator
+                if not self._is_legacy_token:
+                    self._is_legacy_token = True
+                    raise SwitchedToLegacyAPI
+
+                raise InvalidToken
 
         return parsed
 
+    @retry_legacy
     async def latest_carbon_intensity_by_coordinates(
         self, lat: str, lon: str
     ) -> CarbonIntensityResponse:
@@ -74,6 +87,7 @@ class ElectricityMaps:
             )
         return CarbonIntensityResponse.from_dict(result)
 
+    @retry_legacy
     async def latest_carbon_intensity_by_country_code(
         self, code: str
     ) -> CarbonIntensityResponse:
