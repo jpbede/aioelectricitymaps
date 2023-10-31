@@ -7,8 +7,8 @@ from . import load_fixture
 @pytest.fixture
 def mock_response(aresponses: ResponsesMockServer) -> None:
     aresponses.add(
-        "api.co2signal.com",
-        "/v1/latest",
+        "api-access.electricitymaps.com",
+        "/free-tier/home-assistant",
         "GET",
         aresponses.Response(
             status=200,
@@ -21,8 +21,8 @@ def mock_response(aresponses: ResponsesMockServer) -> None:
 @pytest.fixture
 def mock_broken_response(aresponses: ResponsesMockServer) -> None:
     aresponses.add(
-        "api.co2signal.com",
-        "/v1/latest",
+        "api-access.electricitymaps.com",
+        "/free-tier/home-assistant",
         "GET",
         aresponses.Response(
             status=200,
