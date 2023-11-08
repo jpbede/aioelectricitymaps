@@ -19,7 +19,7 @@ from .exceptions import (
 from .marshmallow import ZoneList
 from .models import CarbonIntensityResponse, Zone
 
-_LOGGER = logging.Logger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 
 @dataclass
@@ -40,6 +40,8 @@ class ElectricityMaps:
         headers = {"auth-token": self.token}
         parsed = {}
 
+        _LOGGER.debug("Doing request: GET %s %s", url, str(params))
+
         try:
             async with self.session.get(
                 url, headers=headers, params=params
@@ -54,6 +56,12 @@ class ElectricityMaps:
                 f"Unknown error occurred while fetching data: {exc}"
             ) from exc
         finally:
+            _LOGGER.debug(
+                "Got response with status %s and body: %s",
+                response.status,
+                await response.text(),
+            )
+
             # check for invalid token
             if (
                 "message" in parsed
@@ -65,6 +73,9 @@ class ElectricityMaps:
             ):
                 # enable legacy mode and let the function recalled by the decorator
                 if not self._is_legacy_token:
+                    _LOGGER.debug(
+                        "Detected invalid token on new API, retrying on legacy API."
+                    )
                     self._is_legacy_token = True
                     raise SwitchedToLegacyAPI
 
