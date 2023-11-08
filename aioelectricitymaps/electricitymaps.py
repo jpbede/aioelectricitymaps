@@ -55,7 +55,7 @@ class ElectricityMaps:
             raise ElectricityMapsError(
                 f"Unknown error occurred while fetching data: {exc}"
             ) from exc
-        finally:
+        else:
             _LOGGER.debug(
                 "Got response with status %s and body: %s",
                 response.status,
