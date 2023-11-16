@@ -9,7 +9,7 @@ repos:
       #    - --branch=main
 
   - repo: https://github.com/python-poetry/poetry
-    rev: 1.7.0
+    rev: 1.7.1
     hooks:
       - id: poetry-check
       - id: poetry-lock
