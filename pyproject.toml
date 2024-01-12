@@ -22,7 +22,7 @@ black = "^23.1.0"
 pre-commit = ">=2.21,<4.0"
 mypy = "^1.4.1"
 ruff = "^0.1.0"
-aresponses = "^2.1.6"
+aresponses = "^3.0.0"
 pytest-cov = "^4.1.0"
 syrupy = "^4.5.0"
 
