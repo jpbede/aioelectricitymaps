@@ -32,4 +32,4 @@ jobs:
       - name: 🏗 Install dependencies
         run: poetry install --no-interaction
       - name: 🚀 Run mypy
-        run: poetry run mypy aiotankerkoenig
+        run: poetry run mypy src
