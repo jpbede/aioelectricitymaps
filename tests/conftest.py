@@ -1,11 +1,13 @@
+"""Fixtures for aioelectricitymaps tests."""
 from aresponses import ResponsesMockServer
 import pytest
 
 from . import load_fixture
 
 
-@pytest.fixture
-def mock_response(aresponses: ResponsesMockServer) -> None:
+@pytest.fixture(name="mock_response")
+def _mock_response(aresponses: ResponsesMockServer) -> None:
+    """Mock an API response."""
     aresponses.add(
         "api-access.electricitymaps.com",
         "/free-tier/home-assistant",
@@ -18,8 +20,9 @@ def mock_response(aresponses: ResponsesMockServer) -> None:
     )
 
 
-@pytest.fixture
-def mock_broken_response(aresponses: ResponsesMockServer) -> None:
+@pytest.fixture(name="mock_broken_response")
+def _mock_broken_response(aresponses: ResponsesMockServer) -> None:
+    """Mock a bad API response."""
     aresponses.add(
         "api-access.electricitymaps.com",
         "/free-tier/home-assistant",

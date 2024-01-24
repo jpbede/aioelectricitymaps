@@ -1,4 +1,6 @@
 """Module contains classes for de-/serialisation with marshmallow."""
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 
 from dataclasses_json import DataClassJsonMixin, config
@@ -9,7 +11,7 @@ from .models import Zone
 
 @dataclass(slots=True, frozen=True)
 class ZoneList(dict[str, Zone], DataClassJsonMixin):
-    """List of zones"""
+    """List of zones."""
 
     zones: dict[str, Zone] = field(
         metadata=config(

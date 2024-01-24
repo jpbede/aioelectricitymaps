@@ -4,39 +4,41 @@ from unittest.mock import patch
 import aiohttp
 from aresponses import ResponsesMockServer
 import pytest
+from syrupy.assertion import SnapshotAssertion
 
 from aioelectricitymaps import ElectricityMaps
 from aioelectricitymaps.exceptions import (
     ElectricityMapsDecodeError,
     ElectricityMapsError,
 )
-from tests import load_fixture
+
+from . import load_fixture
 
 
-@pytest.mark.asyncio
-async def test_asyncio_protocol(mock_response) -> None:
+@pytest.mark.usefixtures("mock_response")
+async def test_asyncio_protocol() -> None:
     """Test the asyncio protocol implementation."""
     async with ElectricityMaps(token="abc123") as em:
         assert await em.latest_carbon_intensity_by_country_code("DE")
 
 
-@pytest.mark.asyncio
-async def test_json_request_without_session(mock_response, snapshot) -> None:
+@pytest.mark.usefixtures("mock_response")
+async def test_json_request_without_session(snapshot: SnapshotAssertion) -> None:
     """Test JSON response is handled correctly without given session."""
     em = ElectricityMaps(token="abc123")
     assert await em.latest_carbon_intensity_by_country_code("DE") == snapshot
 
 
-@pytest.mark.asyncio
-async def test_json_request_with_session(mock_response, snapshot) -> None:
+@pytest.mark.usefixtures("mock_response")
+async def test_json_request_with_session(snapshot: SnapshotAssertion) -> None:
     """Test JSON response is handled correctly with given session."""
     async with aiohttp.ClientSession() as session:
         em = ElectricityMaps(token="abc123", session=session)
         assert await em.latest_carbon_intensity_by_country_code("DE") == snapshot
 
 
-@pytest.mark.asyncio
-async def test_carbon_intensity_by_coordinates(mock_response, snapshot) -> None:
+@pytest.mark.usefixtures("mock_response")
+async def test_carbon_intensity_by_coordinates(snapshot: SnapshotAssertion) -> None:
     """Test carbon_intentsity_by_coordinates with given session."""
     async with aiohttp.ClientSession() as session:
         em = ElectricityMaps(token="abc123", session=session)
@@ -49,8 +51,8 @@ async def test_carbon_intensity_by_coordinates(mock_response, snapshot) -> None:
         )
 
 
-@pytest.mark.asyncio
-async def test_broken_json_request(mock_broken_response) -> None:
+@pytest.mark.usefixtures("mock_broken_response")
+async def test_broken_json_request() -> None:
     """Test JSON response is handled correctly with given session."""
     async with aiohttp.ClientSession() as session:
         em = ElectricityMaps(token="abc123", session=session)
@@ -59,7 +61,6 @@ async def test_broken_json_request(mock_broken_response) -> None:
             await em.latest_carbon_intensity_by_country_code("DE")
 
 
-@pytest.mark.asyncio
 async def test_catching_unknown_error() -> None:
     """Test JSON response is handled correctly with given session."""
     async with aiohttp.ClientSession() as session:
@@ -70,8 +71,11 @@ async def test_catching_unknown_error() -> None:
                 await em.latest_carbon_intensity_by_country_code("DE")
 
 
-@pytest.mark.asyncio
-async def test_zones_request(aresponses: ResponsesMockServer, snapshot) -> None:
+async def test_zones_request(
+    aresponses: ResponsesMockServer,
+    snapshot: SnapshotAssertion,
+) -> None:
+    """Test zones request."""
     aresponses.add(
         "api.electricitymap.org",
         "/v3/zones",
