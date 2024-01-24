@@ -1,0 +1,14 @@
+{
+  "name": "aioelectricitymaps",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Asynchronous Python client for Electricity Maps.",
+  "scripts": {
+    "prettier": "prettier --write **/*.{json,js,md,yml,yaml}"
+  },
+  "author": "Jan-Philipp Benecke <github@bnck.me>",
+  "license": "MIT",
+  "devDependencies": {
+    "prettier": "3.2.4"
+  }
+}
