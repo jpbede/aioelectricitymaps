@@ -4,7 +4,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 import json
 import logging
-from typing import Any
+from typing import Any, Self
 
 from aiohttp import ClientSession
 
@@ -24,6 +24,8 @@ _LOGGER = logging.getLogger(__name__)
 
 @dataclass
 class ElectricityMaps:
+    """ElectricityMaps API client."""
+
     token: str
     session: ClientSession | None = None
 
@@ -49,38 +51,40 @@ class ElectricityMaps:
             ) as response:
                 parsed = await response.json()
         except json.JSONDecodeError as exception:
+            msg = f"JSON decoding failed: {exception}"
             raise ElectricityMapsDecodeError(
-                f"JSON decoding failed: {exception}",
+                msg,
             ) from exception
         except Exception as exc:
+            msg = f"Unknown error occurred while fetching data: {exc}"
             raise ElectricityMapsError(
-                f"Unknown error occurred while fetching data: {exc}",
+                msg,
             ) from exc
-        else:
-            _LOGGER.debug(
-                "Got response with status %s and body: %s",
-                response.status,
-                await response.text(),
+
+        _LOGGER.debug(
+            "Got response with status %s and body: %s",
+            response.status,
+            await response.text(),
+        )
+
+        # check for invalid token
+        if (
+            "message" in parsed
+            and response.status == 404
+            and (
+                "No data product found" in parsed["message"]
+                or "Invalid authentication" in parsed["message"]
             )
-
-            # check for invalid token
-            if (
-                "message" in parsed
-                and response.status == 404
-                and (
-                    "No data product found" in parsed["message"]
-                    or "Invalid authentication" in parsed["message"]
+        ):
+            # enable legacy mode and let the function recalled by the decorator
+            if not self._is_legacy_token:
+                _LOGGER.debug(
+                    "Detected invalid token on new API, retrying on legacy API.",
                 )
-            ):
-                # enable legacy mode and let the function recalled by the decorator
-                if not self._is_legacy_token:
-                    _LOGGER.debug(
-                        "Detected invalid token on new API, retrying on legacy API.",
-                    )
-                    self._is_legacy_token = True
-                    raise SwitchedToLegacyAPI
+                self._is_legacy_token = True
+                raise SwitchedToLegacyAPI
 
-                raise InvalidToken
+            raise InvalidToken
 
         return parsed
 
@@ -128,7 +132,7 @@ class ElectricityMaps:
         if self.session and self._close_session:
             await self.session.close()
 
-    async def __aenter__(self) -> ElectricityMaps:
+    async def __aenter__(self) -> Self:
         """Async enter."""
         return self
 

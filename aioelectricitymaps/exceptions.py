@@ -6,7 +6,10 @@ class ElectricityMapsError(Exception):
 
 
 class SwitchedToLegacyAPI(ElectricityMapsError):
-    """"""
+    """Error raised when API switched to legacy.
+
+    Caught by retry_legacy decorator.
+    """
 
 
 class InvalidToken(ElectricityMapsError):
