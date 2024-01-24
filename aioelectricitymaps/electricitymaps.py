@@ -16,8 +16,7 @@ from .exceptions import (
     InvalidToken,
     SwitchedToLegacyAPI,
 )
-from .marshmallow import ZoneList
-from .models import CarbonIntensityResponse, Zone
+from .models import CarbonIntensityResponse, Zone, ZonesResponse
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -32,14 +31,13 @@ class ElectricityMaps:
     _close_session: bool = False
     _is_legacy_token: bool = False
 
-    async def _get(self, url: str, params: dict[str, Any] | None = None) -> Any:
+    async def _get(self, url: str, params: dict[str, Any] | None = None) -> str:
         """Execute a GET request against the API."""
         if self.session is None:
             self.session = ClientSession()
             self._close_session = True
 
         headers = {"auth-token": self.token}
-        parsed = {}
 
         _LOGGER.debug("Doing request: GET %s %s", url, str(params))
 
@@ -86,7 +84,7 @@ class ElectricityMaps:
 
             raise InvalidToken
 
-        return parsed
+        return await response.text()
 
     @retry_legacy
     async def latest_carbon_intensity_by_coordinates(
@@ -105,7 +103,7 @@ class ElectricityMaps:
                 ApiEndpoints.CARBON_INTENSITY,
                 {"lat": lat, "lon": lon},
             )
-        return CarbonIntensityResponse.from_dict(result)
+        return CarbonIntensityResponse.from_json(result)
 
     @retry_legacy
     async def latest_carbon_intensity_by_country_code(
@@ -120,12 +118,12 @@ class ElectricityMaps:
             )
         else:
             result = await self._get(ApiEndpoints.CARBON_INTENSITY, {"zone": code})
-        return CarbonIntensityResponse.from_dict(result)
+        return CarbonIntensityResponse.from_json(result)
 
     async def zones(self) -> dict[str, Zone]:
-        """Get list of zones where carbon intensity is available."""
+        """Get a dict of zones where carbon intensity is available."""
         result = await self._get(ApiEndpoints.ZONES)
-        return ZoneList.from_dict({"zones": result}).zones
+        return ZonesResponse.from_json(result).zones
 
     async def close(self) -> None:
         """Close open client session."""
