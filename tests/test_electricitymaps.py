@@ -2,8 +2,8 @@
 from unittest.mock import patch
 
 import aiohttp
-import pytest
 from aresponses import ResponsesMockServer
+import pytest
 
 from aioelectricitymaps import ElectricityMaps
 from aioelectricitymaps.exceptions import (
@@ -42,7 +42,8 @@ async def test_carbon_intensity_by_coordinates(mock_response, snapshot) -> None:
         em = ElectricityMaps(token="abc123", session=session)
         assert (
             await em.latest_carbon_intensity_by_coordinates(
-                lat="53.1357012", lon="8.2024685"
+                lat="53.1357012",
+                lon="8.2024685",
             )
             == snapshot
         )

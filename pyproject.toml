@@ -31,12 +31,17 @@ aresponses = "^3.0.0"
 syrupy = "4.6.0"
 yamllint = "^1.33.0"
 
-[tool.coverage.run]
-plugins = ["covdefaults"]
-source = ["aioelectricitymaps"]
+[tool.poetry.urls]
+"Bug Tracker" = "https://github.com/jpbede/aioelectricitymaps/issues"
+Changelog = "https://github.com/jpbede/aioelectricitymaps/releases"
 
 [tool.coverage.report]
 show_missing = true
+fail_under = 50
+
+[tool.coverage.run]
+plugins = ["covdefaults"]
+source = ["pydiscovergy"]
 
 [tool.mypy]
 # Specify the target platform details in config, so your developers are
@@ -60,7 +65,6 @@ disallow_untyped_calls = true
 disallow_untyped_decorators = true
 disallow_untyped_defs = true
 no_implicit_optional = true
-no_implicit_reexport = true
 strict_optional = true
 warn_incomplete_stub = true
 warn_no_return = true
@@ -70,9 +74,6 @@ warn_unused_configs = true
 warn_unused_ignores = true
 
 [tool.pylint.MASTER]
-#extension-pkg-whitelist = [
-#  "orjson",
-#]
 ignore = [
   "tests",
 ]
@@ -99,6 +100,10 @@ disable = [
   "duplicate-code",
   "format",
   "unsubscriptable-object",
+  "too-many-instance-attributes",
+  "too-many-arguments",
+  "too-many-public-methods",
+  "wrong-import-order",
 ]
 
 [tool.pylint.SIMILARITIES]
@@ -114,15 +119,15 @@ asyncio_mode = "auto"
 [tool.ruff]
 ignore = [
   "ANN101", # Self... explanatory
+  "ANN102", # cls... just as useless
   "ANN401", # Opinioated warning on disallowing dynamically typed expressions
   "D203", # Conflicts with other rules
   "D213", # Conflicts with other rules
   "D417", # False positives in some occasions
   "PLR2004", # Just annoying, not really useful
-
-  # Conflicts with the Ruff formatter
-  "COM812",
-  "ISC001",
+  "PLR0913", # Too many arguments
+  "TCH001",
+  "TCH003",
 ]
 select = ["ALL"]
 
@@ -131,10 +136,10 @@ fixture-parentheses = false
 mark-parentheses = false
 
 [tool.ruff.isort]
-known-first-party = ["aioelectricitymaps"]
-
-[tool.ruff.lint.flake8-type-checking]
-#runtime-evaluated-base-classes = ["mashumaro.mixins.orjson.DataClassORJSONMixin"]
+known-first-party = ["pydiscovergy"]
+force-sort-within-sections = true
+split-on-trailing-comma = false
+combine-as-imports = true
 
 [tool.ruff.mccabe]
 max-complexity = 25

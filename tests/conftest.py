@@ -1,5 +1,5 @@
-import pytest
 from aresponses import ResponsesMockServer
+import pytest
 
 from . import load_fixture
 
