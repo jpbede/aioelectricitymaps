@@ -35,5 +35,6 @@ class Zone(DataClassJsonMixin):
 
     zone_name: str = field(metadata=config(letter_case=LetterCase.CAMEL))
     country_name: str | None = field(
-        metadata=config(letter_case=LetterCase.CAMEL), default=None
+        metadata=config(letter_case=LetterCase.CAMEL),
+        default=None,
     )

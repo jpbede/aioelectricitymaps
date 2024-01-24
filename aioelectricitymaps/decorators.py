@@ -11,7 +11,7 @@ _P = ParamSpec("_P")
 
 
 def retry_legacy(
-    func: Callable[_P, Coroutine[Any, Any, _R]]
+    func: Callable[_P, Coroutine[Any, Any, _R]],
 ) -> Callable[_P, Coroutine[Any, Any, _R]]:
     """Decorator to retry a function with the legacy API if SwitchedToLegacyAPI is raised."""
 

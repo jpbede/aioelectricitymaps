@@ -16,6 +16,6 @@ class ZoneList(dict[str, Zone], DataClassJsonMixin):
             mm_field=fields.Dict(
                 keys=fields.String(),
                 values=fields.Nested(Zone.schema()),
-            )
-        )
+            ),
+        ),
     )

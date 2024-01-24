@@ -1,9 +1,9 @@
 """Async Python client for electricitymaps.com."""
 from __future__ import annotations
 
+from dataclasses import dataclass
 import json
 import logging
-from dataclasses import dataclass
 from typing import Any
 
 from aiohttp import ClientSession
@@ -32,7 +32,6 @@ class ElectricityMaps:
 
     async def _get(self, url: str, params: dict[str, Any] | None = None) -> Any:
         """Execute a GET request against the API."""
-
         if self.session is None:
             self.session = ClientSession()
             self._close_session = True
@@ -44,16 +43,18 @@ class ElectricityMaps:
 
         try:
             async with self.session.get(
-                url, headers=headers, params=params
+                url,
+                headers=headers,
+                params=params,
             ) as response:
                 parsed = await response.json()
         except json.JSONDecodeError as exception:
             raise ElectricityMapsDecodeError(
-                f"JSON decoding failed: {exception}"
+                f"JSON decoding failed: {exception}",
             ) from exception
         except Exception as exc:
             raise ElectricityMapsError(
-                f"Unknown error occurred while fetching data: {exc}"
+                f"Unknown error occurred while fetching data: {exc}",
             ) from exc
         else:
             _LOGGER.debug(
@@ -74,7 +75,7 @@ class ElectricityMaps:
                 # enable legacy mode and let the function recalled by the decorator
                 if not self._is_legacy_token:
                     _LOGGER.debug(
-                        "Detected invalid token on new API, retrying on legacy API."
+                        "Detected invalid token on new API, retrying on legacy API.",
                     )
                     self._is_legacy_token = True
                     raise SwitchedToLegacyAPI
@@ -85,27 +86,33 @@ class ElectricityMaps:
 
     @retry_legacy
     async def latest_carbon_intensity_by_coordinates(
-        self, lat: str, lon: str
+        self,
+        lat: str,
+        lon: str,
     ) -> CarbonIntensityResponse:
         """Get carbon intensity by coordinates."""
         if self._is_legacy_token:
             result = await self._get(
-                ApiEndpoints.LEGACY_CARBON_INTENSITY, {"lat": lat, "lon": lon}
+                ApiEndpoints.LEGACY_CARBON_INTENSITY,
+                {"lat": lat, "lon": lon},
             )
         else:
             result = await self._get(
-                ApiEndpoints.CARBON_INTENSITY, {"lat": lat, "lon": lon}
+                ApiEndpoints.CARBON_INTENSITY,
+                {"lat": lat, "lon": lon},
             )
         return CarbonIntensityResponse.from_dict(result)
 
     @retry_legacy
     async def latest_carbon_intensity_by_country_code(
-        self, code: str
+        self,
+        code: str,
     ) -> CarbonIntensityResponse:
         """Get carbon intensity by country code."""
         if self._is_legacy_token:
             result = await self._get(
-                ApiEndpoints.LEGACY_CARBON_INTENSITY, {"countryCode": code}
+                ApiEndpoints.LEGACY_CARBON_INTENSITY,
+                {"countryCode": code},
             )
         else:
             result = await self._get(ApiEndpoints.CARBON_INTENSITY, {"zone": code})
