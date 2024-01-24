@@ -4,6 +4,8 @@ name: Typing
 # yamllint disable-line rule:truthy
 on:
   push:
+    branches:
+      - main
   pull_request:
   workflow_dispatch:
 
@@ -32,4 +34,4 @@ jobs:
       - name: 🏗 Install dependencies
         run: poetry install --no-interaction
       - name: 🚀 Run mypy
-        run: poetry run mypy src
+        run: poetry run mypy aioelectricitymaps
