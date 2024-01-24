@@ -41,7 +41,7 @@ fail_under = 50
 
 [tool.coverage.run]
 plugins = ["covdefaults"]
-source = ["pydiscovergy"]
+source = ["aioelectricitymaps"]
 
 [tool.mypy]
 # Specify the target platform details in config, so your developers are
@@ -136,7 +136,7 @@ fixture-parentheses = false
 mark-parentheses = false
 
 [tool.ruff.isort]
-known-first-party = ["pydiscovergy"]
+known-first-party = ["aioelectricitymaps"]
 force-sort-within-sections = true
 split-on-trailing-comma = false
 combine-as-imports = true
