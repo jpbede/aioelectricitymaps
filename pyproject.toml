@@ -7,7 +7,7 @@ repository = "https://github.com/jpbede/aioelectricitymaps"
 license = "MIT License"
 readme = "README.md"
 packages = [
-  { include = "aioelectricitymaps", from = "src" }
+  { include = "aioelectricitymaps" }
 ]
 
 [tool.poetry.dependencies]
