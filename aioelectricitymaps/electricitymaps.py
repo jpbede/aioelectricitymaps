@@ -9,13 +9,7 @@ from typing import Any, Self
 from aiohttp import ClientSession
 
 from .const import ApiEndpoints
-from .decorators import retry_legacy
-from .exceptions import (
-    ElectricityMapsDecodeError,
-    ElectricityMapsError,
-    InvalidToken,
-    SwitchedToLegacyAPI,
-)
+from .exceptions import ElectricityMapsDecodeError, ElectricityMapsError, InvalidToken
 from .models import CarbonIntensityResponse, Zone, ZonesResponse
 
 _LOGGER = logging.getLogger(__name__)
@@ -74,50 +68,28 @@ class ElectricityMaps:
                 or "Invalid authentication" in parsed["message"]
             )
         ):
-            # enable legacy mode and let the function recalled by the decorator
-            if not self._is_legacy_token:
-                _LOGGER.debug(
-                    "Detected invalid token on new API, retrying on legacy API.",
-                )
-                self._is_legacy_token = True
-                raise SwitchedToLegacyAPI
-
             raise InvalidToken
 
         return await response.text()
 
-    @retry_legacy
     async def latest_carbon_intensity_by_coordinates(
         self,
         lat: str,
         lon: str,
     ) -> CarbonIntensityResponse:
         """Get carbon intensity by coordinates."""
-        if self._is_legacy_token:
-            result = await self._get(
-                ApiEndpoints.LEGACY_CARBON_INTENSITY,
-                {"lat": lat, "lon": lon},
-            )
-        else:
-            result = await self._get(
-                ApiEndpoints.CARBON_INTENSITY,
-                {"lat": lat, "lon": lon},
-            )
+        result = await self._get(
+            ApiEndpoints.CARBON_INTENSITY,
+            {"lat": lat, "lon": lon},
+        )
         return CarbonIntensityResponse.from_json(result)
 
-    @retry_legacy
     async def latest_carbon_intensity_by_country_code(
         self,
         code: str,
     ) -> CarbonIntensityResponse:
         """Get carbon intensity by country code."""
-        if self._is_legacy_token:
-            result = await self._get(
-                ApiEndpoints.LEGACY_CARBON_INTENSITY,
-                {"countryCode": code},
-            )
-        else:
-            result = await self._get(ApiEndpoints.CARBON_INTENSITY, {"zone": code})
+        result = await self._get(ApiEndpoints.CARBON_INTENSITY, {"zone": code})
         return CarbonIntensityResponse.from_json(result)
 
     async def zones(self) -> dict[str, Zone]:
