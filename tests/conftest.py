@@ -9,8 +9,8 @@ from . import load_fixture
 def _mock_response(aresponses: ResponsesMockServer) -> None:
     """Mock an API response."""
     aresponses.add(
-        "api-access.electricitymaps.com",
-        "/free-tier/home-assistant",
+        "api.electricitymap.org",
+        "/v3/home-assistant",
         "GET",
         aresponses.Response(
             status=200,
@@ -24,8 +24,8 @@ def _mock_response(aresponses: ResponsesMockServer) -> None:
 def _mock_broken_response(aresponses: ResponsesMockServer) -> None:
     """Mock a bad API response."""
     aresponses.add(
-        "api-access.electricitymaps.com",
-        "/free-tier/home-assistant",
+        "api.electricitymap.org",
+        "/v3/home-assistant",
         "GET",
         aresponses.Response(
             status=200,
