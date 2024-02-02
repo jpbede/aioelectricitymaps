@@ -1,15 +1,17 @@
 """Tests for the electricitymaps.com client."""
-from unittest.mock import patch
+import asyncio
 
 import aiohttp
+from aiohttp import ClientResponse
 from aresponses import ResponsesMockServer
 import pytest
 from syrupy.assertion import SnapshotAssertion
 
 from aioelectricitymaps import ElectricityMaps
 from aioelectricitymaps.exceptions import (
-    ElectricityMapsDecodeError,
-    ElectricityMapsError,
+    ElectricityMapsConnectionError,
+    ElectricityMapsConnectionTimeoutError,
+    ElectricityMapsInvalidTokenError,
 )
 
 from . import load_fixture
@@ -51,24 +53,24 @@ async def test_carbon_intensity_by_coordinates(snapshot: SnapshotAssertion) -> N
         )
 
 
-@pytest.mark.usefixtures("mock_broken_response")
-async def test_broken_json_request() -> None:
+async def test_catching_client_error(aresponses: ResponsesMockServer) -> None:
     """Test JSON response is handled correctly with given session."""
+    aresponses.add(
+        "api.electricitymap.org",
+        "/v3/home-assistant",
+        "GET",
+        aresponses.Response(
+            status=500,
+            headers={"Content-Type": "application/json"},
+            text="Boooom!",
+        ),
+    )
+
     async with aiohttp.ClientSession() as session:
         em = ElectricityMaps(token="abc123", session=session)
 
-        with pytest.raises(ElectricityMapsDecodeError):
+        with pytest.raises(ElectricityMapsConnectionError):
             await em.latest_carbon_intensity_by_country_code("DE")
-
-
-async def test_catching_unknown_error() -> None:
-    """Test JSON response is handled correctly with given session."""
-    async with aiohttp.ClientSession() as session:
-        with patch("aiohttp.ClientSession.get", side_effect=Exception):
-            em = ElectricityMaps(token="abc123", session=session)
-
-            with pytest.raises(ElectricityMapsError):
-                await em.latest_carbon_intensity_by_country_code("DE")
 
 
 async def test_zones_request(
@@ -90,3 +92,43 @@ async def test_zones_request(
     async with aiohttp.ClientSession() as session:
         em = ElectricityMaps(token="abc123", session=session)
         assert await em.zones() == snapshot
+
+
+async def test_timeout(aresponses: ResponsesMockServer) -> None:
+    """Test request timeout."""
+
+    # Faking a timeout by sleeping
+    async def response_handler(_: ClientResponse) -> aresponses.Response:
+        """Response handler for this test."""
+        await asyncio.sleep(8)
+        return aresponses.Response(
+            status=200,
+            text=load_fixture("response.json"),
+        )
+
+    aresponses.add(
+        "api.electricitymap.org",
+        "/v3/home-assistant",
+        "GET",
+        response_handler,
+    )
+    async with ElectricityMaps(token="abc123", request_timeout=1) as em:
+        with pytest.raises(ElectricityMapsConnectionTimeoutError):
+            await em.latest_carbon_intensity_by_country_code("DE")
+
+
+async def test_invalid_token(aresponses: ResponsesMockServer) -> None:
+    """Test invalid token response."""
+    aresponses.add(
+        "api.electricitymap.org",
+        "/v3/home-assistant",
+        "GET",
+        aresponses.Response(
+            status=403,
+            headers={"Content-Type": "application/json"},
+            text="",
+        ),
+    )
+    async with ElectricityMaps(token="abc123", request_timeout=1) as em:
+        with pytest.raises(ElectricityMapsInvalidTokenError):
+            await em.latest_carbon_intensity_by_country_code("DE")
