@@ -5,9 +5,13 @@ class ElectricityMapsError(Exception):
     """Generic error occurred in ElectricityMaps package."""
 
 
-class InvalidToken(ElectricityMapsError):
+class ElectricityMapsConnectionError(ElectricityMapsError):
+    """Error occurred while communicating to the Electricity Maps API."""
+
+
+class ElectricityMapsConnectionTimeoutError(ElectricityMapsError):
+    """Timeout occurred while connecting to the Electricity Maps API."""
+
+
+class ElectricityMapsInvalidTokenError(ElectricityMapsError):
     """Given token is invalid."""
-
-
-class ElectricityMapsDecodeError(ElectricityMapsError):
-    """Decoding error occurred in ElectricityMaps package."""

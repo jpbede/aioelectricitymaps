@@ -1,29 +1,34 @@
 """Async Python client for electricitymaps.com."""
 from __future__ import annotations
 
+import asyncio
 from dataclasses import dataclass
-import json
 import logging
+import socket
 from typing import Any, Self
 
-from aiohttp import ClientSession
+from aiohttp import ClientError, ClientResponseError, ClientSession
 
 from .const import ApiEndpoints
-from .exceptions import ElectricityMapsDecodeError, ElectricityMapsError, InvalidToken
+from .exceptions import (
+    ElectricityMapsConnectionError,
+    ElectricityMapsConnectionTimeoutError,
+    ElectricityMapsInvalidTokenError,
+)
 from .models import CarbonIntensityResponse, Zone, ZonesResponse
 
 _LOGGER = logging.getLogger(__name__)
 
 
-@dataclass
+@dataclass(kw_only=True)
 class ElectricityMaps:
     """ElectricityMaps API client."""
 
     token: str
     session: ClientSession | None = None
+    request_timeout: float = 10
 
     _close_session: bool = False
-    _is_legacy_token: bool = False
 
     async def _get(self, url: str, params: dict[str, Any] | None = None) -> str:
         """Execute a GET request against the API."""
@@ -36,39 +41,34 @@ class ElectricityMaps:
         _LOGGER.debug("Doing request: GET %s %s", url, str(params))
 
         try:
-            async with self.session.get(
-                url,
-                headers=headers,
-                params=params,
-            ) as response:
-                parsed = await response.json()
-        except json.JSONDecodeError as exception:
-            msg = f"JSON decoding failed: {exception}"
-            raise ElectricityMapsDecodeError(
-                msg,
-            ) from exception
-        except Exception as exc:
-            msg = f"Unknown error occurred while fetching data: {exc}"
-            raise ElectricityMapsError(
-                msg,
-            ) from exc
+            async with asyncio.timeout(self.request_timeout):
+                response = await self.session.get(
+                    url,
+                    headers=headers,
+                    params=params,
+                )
+                response.raise_for_status()
+        except asyncio.TimeoutError as exception:
+            msg = "Timeout occurred while connecting to the Electricity Maps API"
+            raise ElectricityMapsConnectionTimeoutError(msg) from exception
+        except (
+            ClientError,
+            socket.gaierror,
+        ) as exception:
+            if isinstance(exception, ClientResponseError) and exception.status == 403:
+                msg = "The given token is invalid"
+                raise ElectricityMapsInvalidTokenError(msg) from exception
+
+            msg = "Error occurred while communicating to the Electricity Maps API"
+            raise ElectricityMapsConnectionError(msg) from exception
+
+        response_text = await response.text()
 
         _LOGGER.debug(
             "Got response with status %s and body: %s",
             response.status,
-            await response.text(),
+            response_text,
         )
-
-        # check for invalid token
-        if (
-            "message" in parsed
-            and response.status == 404
-            and (
-                "No data product found" in parsed["message"]
-                or "Invalid authentication" in parsed["message"]
-            )
-        ):
-            raise InvalidToken
 
         return await response.text()
 

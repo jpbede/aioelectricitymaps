@@ -1,13 +1,19 @@
 """ElectricityMaps wrapper."""
 from .electricitymaps import ElectricityMaps
-from .exceptions import ElectricityMapsDecodeError, ElectricityMapsError, InvalidToken
+from .exceptions import (
+    ElectricityMapsConnectionError,
+    ElectricityMapsConnectionTimeoutError,
+    ElectricityMapsError,
+    ElectricityMapsInvalidTokenError,
+)
 from .models import CarbonIntensityResponse, Zone
 
 __all__ = [
-    "ElectricityMaps",
-    "ElectricityMapsDecodeError",
-    "ElectricityMapsError",
-    "InvalidToken",
     "CarbonIntensityResponse",
     "Zone",
+    "ElectricityMaps",
+    "ElectricityMapsError",
+    "ElectricityMapsConnectionError",
+    "ElectricityMapsConnectionTimeoutError",
+    "ElectricityMapsInvalidTokenError",
 ]
