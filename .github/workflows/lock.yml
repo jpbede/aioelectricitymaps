@@ -11,6 +11,10 @@ jobs:
   lock:
     name: 🔒 Lock closed issues and PRs
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+      discussions: write
     steps:
       - uses: dessant/lock-threads@v5.0.1
         with:
