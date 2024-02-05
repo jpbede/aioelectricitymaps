@@ -48,7 +48,7 @@ class ElectricityMaps:
                     params=params,
                 )
                 response.raise_for_status()
-        except asyncio.TimeoutError as exception:
+        except TimeoutError as exception:
             msg = "Timeout occurred while connecting to the Electricity Maps API"
             raise ElectricityMapsConnectionTimeoutError(msg) from exception
         except (
