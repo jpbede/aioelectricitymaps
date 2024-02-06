@@ -89,7 +89,7 @@ class ElectricityMaps:
         code: str,
     ) -> CarbonIntensityResponse:
         """Get carbon intensity by country code."""
-        result = await self._get(ApiEndpoints.CARBON_INTENSITY, {"zone": code})
+        result = await self._get(ApiEndpoints.CARBON_INTENSITY, {"zone": code.upper()})
         return CarbonIntensityResponse.from_json(result)
 
     async def zones(self) -> dict[str, Zone]:
