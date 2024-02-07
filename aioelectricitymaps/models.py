@@ -7,6 +7,9 @@ from typing import Any, Self
 from mashumaro import field_options
 from mashumaro.mixins.orjson import DataClassORJSONMixin
 
+from .const import Status
+from .exceptions import ElectricityMapsError, ElectricityMapsNoDataError
+
 
 @dataclass(slots=True, frozen=True, kw_only=True)
 class CarbonIntensityResponse(DataClassORJSONMixin):
@@ -16,6 +19,23 @@ class CarbonIntensityResponse(DataClassORJSONMixin):
     country_code: str = field(metadata=field_options(alias="countryCode"))
     data: CarbonIntensityData
     units: CarbonIntensityUnit
+
+    @classmethod
+    def __pre_deserialize__(
+        cls: type[Self],
+        d: dict[Any, Any],
+    ) -> dict[Any, Any]:
+        """Check if the status is ok otherwise raise an error."""
+        status = d.get("status")
+        if status == Status.OK:
+            return d
+
+        if status == Status.NO_DATA:
+            msg = "No data available for selected location"
+            raise ElectricityMapsNoDataError(msg)
+
+        msg = f"Unknown response status occurred: {status}"
+        raise ElectricityMapsError(msg)
 
 
 @dataclass(slots=True, frozen=True, kw_only=True)

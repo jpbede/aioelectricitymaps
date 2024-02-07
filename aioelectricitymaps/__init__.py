@@ -5,6 +5,7 @@ from .exceptions import (
     ElectricityMapsConnectionTimeoutError,
     ElectricityMapsError,
     ElectricityMapsInvalidTokenError,
+    ElectricityMapsNoDataError,
 )
 from .models import CarbonIntensityResponse, Zone
 
@@ -13,6 +14,7 @@ __all__ = [
     "Zone",
     "ElectricityMaps",
     "ElectricityMapsError",
+    "ElectricityMapsNoDataError",
     "ElectricityMapsConnectionError",
     "ElectricityMapsConnectionTimeoutError",
     "ElectricityMapsInvalidTokenError",

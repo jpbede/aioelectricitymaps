@@ -11,7 +11,9 @@ from aioelectricitymaps import ElectricityMaps
 from aioelectricitymaps.exceptions import (
     ElectricityMapsConnectionError,
     ElectricityMapsConnectionTimeoutError,
+    ElectricityMapsError,
     ElectricityMapsInvalidTokenError,
+    ElectricityMapsNoDataError,
 )
 
 from . import load_fixture
@@ -131,4 +133,32 @@ async def test_invalid_token(aresponses: ResponsesMockServer) -> None:
     )
     async with ElectricityMaps(token="abc123", request_timeout=1) as em:
         with pytest.raises(ElectricityMapsInvalidTokenError):
+            await em.latest_carbon_intensity_by_country_code("DE")
+
+
+@pytest.mark.parametrize(
+    ("filename", "expected_exception"),
+    [
+        ("no-data-response.json", ElectricityMapsNoDataError),
+        ("unknown-response.json", ElectricityMapsError),
+    ],
+)
+async def test_not_ok_responses(
+    aresponses: ResponsesMockServer,
+    filename: str,
+    expected_exception: type[Exception],
+) -> None:
+    """Test not-ok responses."""
+    aresponses.add(
+        "api.electricitymap.org",
+        "/v3/home-assistant",
+        "GET",
+        aresponses.Response(
+            status=200,
+            headers={"Content-Type": "application/json"},
+            text=load_fixture(filename),
+        ),
+    )
+    async with ElectricityMaps(token="abc123", request_timeout=1) as em:
+        with pytest.raises(expected_exception):
             await em.latest_carbon_intensity_by_country_code("DE")
