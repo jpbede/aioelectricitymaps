@@ -124,7 +124,7 @@ async def test_invalid_token(aresponses: ResponsesMockServer) -> None:
         "/v3/home-assistant",
         "GET",
         aresponses.Response(
-            status=403,
+            status=401,
             headers={"Content-Type": "application/json"},
             text="",
         ),
