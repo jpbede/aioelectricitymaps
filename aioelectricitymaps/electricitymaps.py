@@ -55,7 +55,7 @@ class ElectricityMaps:
             ClientError,
             socket.gaierror,
         ) as exception:
-            if isinstance(exception, ClientResponseError) and exception.status == 403:
+            if isinstance(exception, ClientResponseError) and exception.status == 401:
                 msg = "The given token is invalid"
                 raise ElectricityMapsInvalidTokenError(msg) from exception
 
