@@ -30,13 +30,19 @@ class ElectricityMaps:
 
     _close_session: bool = False
 
-    async def _get(self, url: str, params: dict[str, Any] | None = None) -> str:
+    async def _get(
+        self,
+        *,
+        url: str,
+        params: dict[str, Any] | None = None,
+        unauthenticated: bool = False,
+    ) -> str:
         """Execute a GET request against the API."""
         if self.session is None:
             self.session = ClientSession()
             self._close_session = True
 
-        headers = {"auth-token": self.token}
+        headers = {} if unauthenticated else {"auth-token": self.token}
 
         _LOGGER.debug("Doing request: GET %s %s", url, str(params))
 
@@ -79,8 +85,8 @@ class ElectricityMaps:
     ) -> CarbonIntensityResponse:
         """Get carbon intensity by coordinates."""
         result = await self._get(
-            ApiEndpoints.CARBON_INTENSITY,
-            {"lat": lat, "lon": lon},
+            url=ApiEndpoints.CARBON_INTENSITY,
+            params={"lat": lat, "lon": lon},
         )
         return CarbonIntensityResponse.from_json(result)
 
@@ -89,12 +95,15 @@ class ElectricityMaps:
         code: str,
     ) -> CarbonIntensityResponse:
         """Get carbon intensity by country code."""
-        result = await self._get(ApiEndpoints.CARBON_INTENSITY, {"zone": code.upper()})
+        result = await self._get(
+            url=ApiEndpoints.CARBON_INTENSITY,
+            params={"zone": code.upper()},
+        )
         return CarbonIntensityResponse.from_json(result)
 
     async def zones(self) -> dict[str, Zone]:
         """Get a dict of zones where carbon intensity is available."""
-        result = await self._get(ApiEndpoints.ZONES)
+        result = await self._get(url=ApiEndpoints.ZONES, unauthenticated=True)
         return ZonesResponse.from_json(result).zones
 
     async def close(self) -> None:
