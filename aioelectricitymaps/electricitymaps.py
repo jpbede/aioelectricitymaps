@@ -1,7 +1,6 @@
 """Async Python client for electricitymaps.com."""
 from __future__ import annotations
 
-import asyncio
 from dataclasses import dataclass
 import logging
 import socket
@@ -26,7 +25,6 @@ class ElectricityMaps:
 
     token: str
     session: ClientSession | None = None
-    request_timeout: float = 10
 
     _close_session: bool = False
 
@@ -47,13 +45,13 @@ class ElectricityMaps:
         _LOGGER.debug("Doing request: GET %s %s", url, str(params))
 
         try:
-            async with asyncio.timeout(self.request_timeout):
-                response = await self.session.get(
-                    url,
-                    headers=headers,
-                    params=params,
-                )
+            async with self.session.get(
+                url,
+                headers=headers,
+                params=params,
+            ) as response:
                 response.raise_for_status()
+                response_text = await response.text()
         except TimeoutError as exception:
             msg = "Timeout occurred while connecting to the Electricity Maps API"
             raise ElectricityMapsConnectionTimeoutError(msg) from exception
@@ -68,15 +66,13 @@ class ElectricityMaps:
             msg = "Error occurred while communicating to the Electricity Maps API"
             raise ElectricityMapsConnectionError(msg) from exception
 
-        response_text = await response.text()
-
         _LOGGER.debug(
             "Got response with status %s and body: %s",
             response.status,
             response_text,
         )
 
-        return await response.text()
+        return response_text
 
     async def latest_carbon_intensity_by_coordinates(
         self,
