@@ -1,9 +1,6 @@
 """Tests for the electricitymaps.com client."""
-import asyncio
-
 import aiohttp
-from aiohttp import ClientResponse
-from aresponses import ResponsesMockServer
+from aioresponses import aioresponses
 import pytest
 from syrupy.assertion import SnapshotAssertion
 
@@ -55,17 +52,13 @@ async def test_carbon_intensity_by_coordinates(snapshot: SnapshotAssertion) -> N
         )
 
 
-async def test_catching_client_error(aresponses: ResponsesMockServer) -> None:
+async def test_catching_client_error(responses: aioresponses) -> None:
     """Test JSON response is handled correctly with given session."""
-    aresponses.add(
-        "api.electricitymap.org",
-        "/v3/home-assistant",
-        "GET",
-        aresponses.Response(
-            status=500,
-            headers={"Content-Type": "application/json"},
-            text="Boooom!",
-        ),
+    responses.get(
+        "https://api.electricitymap.org/v3/home-assistant?zone=DE",
+        status=500,
+        headers={"Content-Type": "application/json"},
+        body="Boooom!",
     )
 
     async with aiohttp.ClientSession() as session:
@@ -76,19 +69,15 @@ async def test_catching_client_error(aresponses: ResponsesMockServer) -> None:
 
 
 async def test_zones_request(
-    aresponses: ResponsesMockServer,
+    responses: aioresponses,
     snapshot: SnapshotAssertion,
 ) -> None:
     """Test zones request."""
-    aresponses.add(
-        "api.electricitymap.org",
-        "/v3/zones",
-        "GET",
-        aresponses.Response(
-            status=200,
-            headers={"Content-Type": "application/json"},
-            text=load_fixture("zones.json"),
-        ),
+    responses.get(
+        "https://api.electricitymap.org/v3/zones",
+        status=200,
+        headers={"Content-Type": "application/json"},
+        body=load_fixture("zones.json"),
     )
 
     async with aiohttp.ClientSession() as session:
@@ -96,42 +85,26 @@ async def test_zones_request(
         assert await em.zones() == snapshot
 
 
-async def test_timeout(aresponses: ResponsesMockServer) -> None:
+async def test_timeout(responses: aioresponses) -> None:
     """Test request timeout."""
-
-    # Faking a timeout by sleeping
-    async def response_handler(_: ClientResponse) -> aresponses.Response:
-        """Response handler for this test."""
-        await asyncio.sleep(8)
-        return aresponses.Response(
-            status=200,
-            text=load_fixture("response.json"),
-        )
-
-    aresponses.add(
-        "api.electricitymap.org",
-        "/v3/home-assistant",
-        "GET",
-        response_handler,
+    responses.add(
+        "https://api.electricitymap.org/v3/home-assistant?zone=DE",
+        timeout=True,
     )
-    async with ElectricityMaps(token="abc123", request_timeout=1) as em:
+    async with ElectricityMaps(token="abc123") as em:
         with pytest.raises(ElectricityMapsConnectionTimeoutError):
             await em.latest_carbon_intensity_by_country_code("DE")
 
 
-async def test_invalid_token(aresponses: ResponsesMockServer) -> None:
+async def test_invalid_token(responses: aioresponses) -> None:
     """Test invalid token response."""
-    aresponses.add(
-        "api.electricitymap.org",
-        "/v3/home-assistant",
-        "GET",
-        aresponses.Response(
-            status=401,
-            headers={"Content-Type": "application/json"},
-            text="",
-        ),
+    responses.get(
+        "https://api.electricitymap.org/v3/home-assistant?zone=DE",
+        status=401,
+        headers={"Content-Type": "application/json"},
+        body="",
     )
-    async with ElectricityMaps(token="abc123", request_timeout=1) as em:
+    async with ElectricityMaps(token="abc123") as em:
         with pytest.raises(ElectricityMapsInvalidTokenError):
             await em.latest_carbon_intensity_by_country_code("DE")
 
@@ -144,21 +117,17 @@ async def test_invalid_token(aresponses: ResponsesMockServer) -> None:
     ],
 )
 async def test_not_ok_responses(
-    aresponses: ResponsesMockServer,
+    responses: aioresponses,
     filename: str,
     expected_exception: type[Exception],
 ) -> None:
     """Test not-ok responses."""
-    aresponses.add(
-        "api.electricitymap.org",
-        "/v3/home-assistant",
-        "GET",
-        aresponses.Response(
-            status=200,
-            headers={"Content-Type": "application/json"},
-            text=load_fixture(filename),
-        ),
+    responses.get(
+        "https://api.electricitymap.org/v3/home-assistant?zone=DE",
+        status=200,
+        headers={"Content-Type": "application/json"},
+        body=load_fixture(filename),
     )
-    async with ElectricityMaps(token="abc123", request_timeout=1) as em:
+    async with ElectricityMaps(token="abc123") as em:
         with pytest.raises(expected_exception):
             await em.latest_carbon_intensity_by_country_code("DE")

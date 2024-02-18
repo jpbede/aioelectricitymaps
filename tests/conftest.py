@@ -1,35 +1,40 @@
 """Fixtures for aioelectricitymaps tests."""
-from aresponses import ResponsesMockServer
+from collections.abc import Generator
+import re
+
+from aioresponses import aioresponses
 import pytest
 
 from . import load_fixture
 
 
+@pytest.fixture(name="responses")
+def aioresponses_fixture() -> Generator[aioresponses, None, None]:
+    """Return aioresponses fixture."""
+    with aioresponses() as mocked_responses:
+        yield mocked_responses
+
+
 @pytest.fixture(name="mock_response")
-def _mock_response(aresponses: ResponsesMockServer) -> None:
+def _mock_response(responses: aioresponses) -> None:
     """Mock an API response."""
-    aresponses.add(
-        "api.electricitymap.org",
-        "/v3/home-assistant",
-        "GET",
-        aresponses.Response(
-            status=200,
-            headers={"Content-Type": "application/json"},
-            text=load_fixture("response.json"),
-        ),
+    url_pattern = re.compile(
+        r"^https://api\.electricitymap\.org/v3/home-assistant\?.*$",
+    )
+    responses.get(
+        url_pattern,
+        status=200,
+        headers={"Content-Type": "application/json"},
+        body=load_fixture("response.json"),
     )
 
 
 @pytest.fixture(name="mock_broken_response")
-def _mock_broken_response(aresponses: ResponsesMockServer) -> None:
+def _mock_broken_response(responses: aioresponses) -> None:
     """Mock a bad API response."""
-    aresponses.add(
-        "api.electricitymap.org",
-        "/v3/home-assistant",
-        "GET",
-        aresponses.Response(
-            status=200,
-            headers={"Content-Type": "application/json"},
-            text='{"status": "ok"',
-        ),
+    responses.get(
+        "https://api.electricitymap.org/v3/home-assistant",
+        status=200,
+        headers={"Content-Type": "application/json"},
+        body='{"status": "ok"',
     )
