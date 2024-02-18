@@ -1,5 +1,4 @@
 """Tests for the electricitymaps.com client."""
-import aiohttp
 from aioresponses import aioresponses
 import pytest
 from syrupy.assertion import SnapshotAssertion
@@ -17,42 +16,34 @@ from . import load_fixture
 
 
 @pytest.mark.usefixtures("mock_response")
-async def test_asyncio_protocol() -> None:
-    """Test the asyncio protocol implementation."""
-    async with ElectricityMaps(token="abc123") as em:
-        assert await em.latest_carbon_intensity_by_country_code("DE")
-
-
-@pytest.mark.usefixtures("mock_response")
 async def test_json_request_without_session(snapshot: SnapshotAssertion) -> None:
     """Test JSON response is handled correctly without given session."""
-    em = ElectricityMaps(token="abc123")
-    assert await em.latest_carbon_intensity_by_country_code("DE") == snapshot
-
-
-@pytest.mark.usefixtures("mock_response")
-async def test_json_request_with_session(snapshot: SnapshotAssertion) -> None:
-    """Test JSON response is handled correctly with given session."""
-    async with aiohttp.ClientSession() as session:
-        em = ElectricityMaps(token="abc123", session=session)
+    async with ElectricityMaps(token="abc123") as em:
         assert await em.latest_carbon_intensity_by_country_code("DE") == snapshot
+        assert em.session is not None
+
+    assert em.session.closed
 
 
 @pytest.mark.usefixtures("mock_response")
-async def test_carbon_intensity_by_coordinates(snapshot: SnapshotAssertion) -> None:
+async def test_carbon_intensity_by_coordinates(
+    electricitymaps_client: ElectricityMaps,
+    snapshot: SnapshotAssertion,
+) -> None:
     """Test carbon_intentsity_by_coordinates with given session."""
-    async with aiohttp.ClientSession() as session:
-        em = ElectricityMaps(token="abc123", session=session)
-        assert (
-            await em.latest_carbon_intensity_by_coordinates(
-                lat="53.1357012",
-                lon="8.2024685",
-            )
-            == snapshot
+    assert (
+        await electricitymaps_client.latest_carbon_intensity_by_coordinates(
+            lat="53.1357012",
+            lon="8.2024685",
         )
+        == snapshot
+    )
 
 
-async def test_catching_client_error(responses: aioresponses) -> None:
+async def test_catching_client_error(
+    electricitymaps_client: ElectricityMaps,
+    responses: aioresponses,
+) -> None:
     """Test JSON response is handled correctly with given session."""
     responses.get(
         "https://api.electricitymap.org/v3/home-assistant?zone=DE",
@@ -60,15 +51,12 @@ async def test_catching_client_error(responses: aioresponses) -> None:
         headers={"Content-Type": "application/json"},
         body="Boooom!",
     )
-
-    async with aiohttp.ClientSession() as session:
-        em = ElectricityMaps(token="abc123", session=session)
-
-        with pytest.raises(ElectricityMapsConnectionError):
-            await em.latest_carbon_intensity_by_country_code("DE")
+    with pytest.raises(ElectricityMapsConnectionError):
+        await electricitymaps_client.latest_carbon_intensity_by_country_code("DE")
 
 
 async def test_zones_request(
+    electricitymaps_client: ElectricityMaps,
     responses: aioresponses,
     snapshot: SnapshotAssertion,
 ) -> None:
@@ -79,24 +67,26 @@ async def test_zones_request(
         headers={"Content-Type": "application/json"},
         body=load_fixture("zones.json"),
     )
-
-    async with aiohttp.ClientSession() as session:
-        em = ElectricityMaps(token="abc123", session=session)
-        assert await em.zones() == snapshot
+    assert await electricitymaps_client.zones() == snapshot
 
 
-async def test_timeout(responses: aioresponses) -> None:
+async def test_timeout(
+    electricitymaps_client: ElectricityMaps,
+    responses: aioresponses,
+) -> None:
     """Test request timeout."""
     responses.add(
         "https://api.electricitymap.org/v3/home-assistant?zone=DE",
         timeout=True,
     )
-    async with ElectricityMaps(token="abc123") as em:
-        with pytest.raises(ElectricityMapsConnectionTimeoutError):
-            await em.latest_carbon_intensity_by_country_code("DE")
+    with pytest.raises(ElectricityMapsConnectionTimeoutError):
+        await electricitymaps_client.latest_carbon_intensity_by_country_code("DE")
 
 
-async def test_invalid_token(responses: aioresponses) -> None:
+async def test_invalid_token(
+    electricitymaps_client: ElectricityMaps,
+    responses: aioresponses,
+) -> None:
     """Test invalid token response."""
     responses.get(
         "https://api.electricitymap.org/v3/home-assistant?zone=DE",
@@ -104,9 +94,8 @@ async def test_invalid_token(responses: aioresponses) -> None:
         headers={"Content-Type": "application/json"},
         body="",
     )
-    async with ElectricityMaps(token="abc123") as em:
-        with pytest.raises(ElectricityMapsInvalidTokenError):
-            await em.latest_carbon_intensity_by_country_code("DE")
+    with pytest.raises(ElectricityMapsInvalidTokenError):
+        await electricitymaps_client.latest_carbon_intensity_by_country_code("DE")
 
 
 @pytest.mark.parametrize(
@@ -117,6 +106,7 @@ async def test_invalid_token(responses: aioresponses) -> None:
     ],
 )
 async def test_not_ok_responses(
+    electricitymaps_client: ElectricityMaps,
     responses: aioresponses,
     filename: str,
     expected_exception: type[Exception],
@@ -128,6 +118,5 @@ async def test_not_ok_responses(
         headers={"Content-Type": "application/json"},
         body=load_fixture(filename),
     )
-    async with ElectricityMaps(token="abc123") as em:
-        with pytest.raises(expected_exception):
-            await em.latest_carbon_intensity_by_country_code("DE")
+    with pytest.raises(expected_exception):
+        await electricitymaps_client.latest_carbon_intensity_by_country_code("DE")
