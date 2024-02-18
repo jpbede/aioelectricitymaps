@@ -18,7 +18,9 @@ def aioresponses_fixture() -> Generator[aioresponses, None, None]:
 @pytest.fixture(name="mock_response")
 def _mock_response(responses: aioresponses) -> None:
     """Mock an API response."""
-    url_pattern = re.compile(r"^https://api.electricitymap.org/v3/home-assistant\?.*$")
+    url_pattern = re.compile(
+        r"^https://api\.electricitymap\.org/v3/home-assistant\?.*$",
+    )
     responses.get(
         url_pattern,
         status=200,
