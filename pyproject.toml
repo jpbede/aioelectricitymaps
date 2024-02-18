@@ -25,7 +25,6 @@ python = "^3.11"
 aiohttp = ">=3.8.0"
 mashumaro = ">=3.11"
 orjson = ">=3.9.8"
-aioresponses = "^0.7.6"
 
 [tool.poetry.group.dev.dependencies]
 codespell = "2.2.6"
