@@ -1,9 +1,12 @@
 """Fixtures for aioelectricitymaps tests."""
-from collections.abc import Generator
+from collections.abc import AsyncGenerator, Generator
 import re
 
+import aiohttp
 from aioresponses import aioresponses
 import pytest
+
+from aioelectricitymaps import ElectricityMaps
 
 from . import load_fixture
 
@@ -38,3 +41,13 @@ def _mock_broken_response(responses: aioresponses) -> None:
         headers={"Content-Type": "application/json"},
         body='{"status": "ok"',
     )
+
+
+@pytest.fixture(name="electricitymaps_client")
+async def client() -> AsyncGenerator[ElectricityMaps, None]:
+    """Return a ElectricityMaps client."""
+    async with aiohttp.ClientSession() as session, ElectricityMaps(
+        token="abc123",
+        session=session,
+    ) as electricitymaps_client:
+        yield electricitymaps_client
