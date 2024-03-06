@@ -132,3 +132,43 @@ async def test_not_ok_responses(
         await electricitymaps_client.carbon_intensity_for_home_assistant(
             ZoneRequest("DE"),
         )
+
+
+async def test_latest_power_breakdown(
+    electricitymaps_client: ElectricityMaps,
+    responses: aioresponses,
+    snapshot: SnapshotAssertion,
+) -> None:
+    """Test latest_power_breakdown."""
+    responses.get(
+        "https://api.electricitymap.org/v3/power-breakdown/latest?zone=DE",
+        status=200,
+        headers={"Content-Type": "application/json"},
+        body=load_fixture("latest_power_breakdown.json"),
+    )
+    assert (
+        await electricitymaps_client.latest_power_breakdown(
+            ZoneRequest("DE"),
+        )
+        == snapshot
+    )
+
+
+async def test_power_breakdown_history(
+    electricitymaps_client: ElectricityMaps,
+    responses: aioresponses,
+    snapshot: SnapshotAssertion,
+) -> None:
+    """Test power_breakdown_history."""
+    responses.get(
+        "https://api.electricitymap.org/v3/power-breakdown/history?zone=DE",
+        status=200,
+        headers={"Content-Type": "application/json"},
+        body=load_fixture("power_breakdown_history.json"),
+    )
+    assert (
+        await electricitymaps_client.power_breakdown_history(
+            ZoneRequest("DE"),
+        )
+        == snapshot
+    )

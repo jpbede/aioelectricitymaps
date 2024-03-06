@@ -14,7 +14,13 @@ from .exceptions import (
     ElectricityMapsConnectionTimeoutError,
     ElectricityMapsInvalidTokenError,
 )
-from .models import HomeAssistantCarbonIntensityResponse, Zone, ZonesResponse
+from .models import (
+    HomeAssistantCarbonIntensityResponse,
+    LatestPowerBreakdown,
+    PowerBreakdownHistory,
+    Zone,
+    ZonesResponse,
+)
 
 if TYPE_CHECKING:
     from .request import BaseRequest, CoordinatesRequest, ZoneRequest
@@ -87,10 +93,32 @@ class ElectricityMaps:
     ) -> HomeAssistantCarbonIntensityResponse:
         """Get carbon intensity."""
         result = await self._get(
-            url=ApiEndpoints.CARBON_INTENSITY,
+            url=ApiEndpoints.CARBON_INTENSITY_HA,
             request=request,
         )
         return HomeAssistantCarbonIntensityResponse.from_json(result)
+
+    async def latest_power_breakdown(
+        self,
+        request: CoordinatesRequest | ZoneRequest,
+    ) -> LatestPowerBreakdown:
+        """Get latest power breakdown."""
+        result = await self._get(
+            url=ApiEndpoints.LATEST_POWER_BREAKDOWN,
+            request=request,
+        )
+        return LatestPowerBreakdown.from_json(result)
+
+    async def power_breakdown_history(
+        self,
+        request: CoordinatesRequest | ZoneRequest,
+    ) -> PowerBreakdownHistory:
+        """Get power breakdown history."""
+        result = await self._get(
+            url=ApiEndpoints.HISTORY_POWER_BREAKDOWN,
+            request=request,
+        )
+        return PowerBreakdownHistory.from_json(result)
 
     async def zones(self) -> dict[str, Zone]:
         """Get a dict of zones where carbon intensity is available."""

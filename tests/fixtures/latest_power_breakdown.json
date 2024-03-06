@@ -1,0 +1,62 @@
+{
+  "zone": "DE",
+  "datetime": "2024-03-06T19:00:00.000Z",
+  "updatedAt": "2024-03-06T18:48:27.926Z",
+  "createdAt": "2024-03-03T19:46:59.534Z",
+  "powerConsumptionBreakdown": {
+    "nuclear": 440,
+    "geothermal": 21,
+    "biomass": 5896,
+    "coal": 23893,
+    "wind": 6998,
+    "solar": 0,
+    "hydro": 2870,
+    "gas": 10334,
+    "oil": 339,
+    "unknown": 403,
+    "hydro discharge": 1706,
+    "battery discharge": 0
+  },
+  "powerProductionBreakdown": {
+    "nuclear": null,
+    "geothermal": 21,
+    "biomass": 5408,
+    "coal": 23339,
+    "wind": 6415,
+    "solar": 0,
+    "hydro": 1671,
+    "gas": 9602,
+    "oil": 304,
+    "unknown": 313,
+    "hydro discharge": 1496,
+    "battery discharge": null
+  },
+  "powerImportBreakdown": {
+    "AT": 244,
+    "BE": 901,
+    "CH": 1344,
+    "LU": 0,
+    "NL": 0,
+    "DK-DK1": 1473,
+    "DK-DK2": 619,
+    "NO-NO2": 1217
+  },
+  "powerExportBreakdown": {
+    "AT": 0,
+    "BE": 0,
+    "CH": 0,
+    "LU": 752,
+    "NL": 715,
+    "DK-DK1": 0,
+    "DK-DK2": 0,
+    "NO-NO2": 0
+  },
+  "fossilFreePercentage": 34,
+  "renewablePercentage": 33,
+  "powerConsumptionTotal": 52901,
+  "powerProductionTotal": 48570,
+  "powerImportTotal": 5798,
+  "powerExportTotal": 1467,
+  "isEstimated": true,
+  "estimationMethod": "TIME_SLICER_AVERAGE"
+}
