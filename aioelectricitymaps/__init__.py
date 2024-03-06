@@ -8,10 +8,13 @@ from .exceptions import (
     ElectricityMapsNoDataError,
 )
 from .models import CarbonIntensityResponse, Zone
+from .request import CoordinatesRequest, ZoneRequest
 
 __all__ = [
     "CarbonIntensityResponse",
+    "CoordinatesRequest",
     "Zone",
+    "ZoneRequest",
     "ElectricityMaps",
     "ElectricityMapsError",
     "ElectricityMapsNoDataError",
