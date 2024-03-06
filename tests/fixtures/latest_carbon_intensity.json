@@ -1,0 +1,10 @@
+{
+  "zone": "US-CAR-DUK",
+  "carbonIntensity": 216,
+  "datetime": "2024-03-06T19:00:00.000Z",
+  "updatedAt": "2024-03-06T18:48:27.926Z",
+  "createdAt": "2024-03-03T19:47:16.265Z",
+  "emissionFactorType": "lifecycle",
+  "isEstimated": true,
+  "estimationMethod": "TIME_SLICER_AVERAGE"
+}
