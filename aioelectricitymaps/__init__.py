@@ -7,11 +7,11 @@ from .exceptions import (
     ElectricityMapsInvalidTokenError,
     ElectricityMapsNoDataError,
 )
-from .models import CarbonIntensityResponse, Zone
+from .models import HomeAssistantCarbonIntensityResponse, Zone
 from .request import CoordinatesRequest, ZoneRequest
 
 __all__ = [
-    "CarbonIntensityResponse",
+    "HomeAssistantCarbonIntensityResponse",
     "CoordinatesRequest",
     "Zone",
     "ZoneRequest",

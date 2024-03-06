@@ -1,9 +1,9 @@
 # serializer version: 1
 # name: test_carbon_intensity_by_coordinates
-  CarbonIntensityResponse(status='ok', country_code='DE', data=CarbonIntensityData(carbon_intensity=474.0, fossil_fuel_percentage=42.22), units=CarbonIntensityUnit(carbon_intensity='gCO2eq/kWh'))
+  HomeAssistantCarbonIntensityResponse(status='ok', country_code='DE', data=HomeAssistantCarbonIntensityData(carbon_intensity=474.0, fossil_fuel_percentage=42.22), units=HomeAssistantCarbonIntensityUnit(carbon_intensity='gCO2eq/kWh'))
 # ---
 # name: test_json_request_without_session
-  CarbonIntensityResponse(status='ok', country_code='DE', data=CarbonIntensityData(carbon_intensity=474.0, fossil_fuel_percentage=42.22), units=CarbonIntensityUnit(carbon_intensity='gCO2eq/kWh'))
+  HomeAssistantCarbonIntensityResponse(status='ok', country_code='DE', data=HomeAssistantCarbonIntensityData(carbon_intensity=474.0, fossil_fuel_percentage=42.22), units=HomeAssistantCarbonIntensityUnit(carbon_intensity='gCO2eq/kWh'))
 # ---
 # name: test_zones_request
   dict({

@@ -12,13 +12,13 @@ from .exceptions import ElectricityMapsError, ElectricityMapsNoDataError
 
 
 @dataclass(slots=True, frozen=True, kw_only=True)
-class CarbonIntensityResponse(DataClassORJSONMixin):
+class HomeAssistantCarbonIntensityResponse(DataClassORJSONMixin):
     """API response."""
 
     status: str
     country_code: str = field(metadata=field_options(alias="countryCode"))
-    data: CarbonIntensityData
-    units: CarbonIntensityUnit
+    data: HomeAssistantCarbonIntensityData
+    units: HomeAssistantCarbonIntensityUnit
 
     @classmethod
     def __pre_deserialize__(
@@ -54,7 +54,7 @@ class ZonesResponse(DataClassORJSONMixin):
 
 
 @dataclass(slots=True, frozen=True, kw_only=True)
-class CarbonIntensityData:
+class HomeAssistantCarbonIntensityData:
     """Data field."""
 
     carbon_intensity: float = field(metadata=field_options(alias="carbonIntensity"))
@@ -64,7 +64,7 @@ class CarbonIntensityData:
 
 
 @dataclass(slots=True, frozen=True, kw_only=True)
-class CarbonIntensityUnit:
+class HomeAssistantCarbonIntensityUnit:
     """Unit field."""
 
     carbon_intensity: str = field(metadata=field_options(alias="carbonIntensity"))
