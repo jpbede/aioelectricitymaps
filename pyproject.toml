@@ -141,6 +141,10 @@ ignore = [
   "D417", # False positives in some occasions
   "PLR2004", # Just annoying, not really useful
   "PLR0913", # Too many arguments
+  "COM812", # avoid conflicts
+  "COM819", # avoid conflicts
+  "ISC001", # avoid conflicts
+  "ISC002", # avoid conflicts
 ]
 select = ["ALL"]
 

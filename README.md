@@ -26,15 +26,15 @@ pip install aioelectricitymaps
 ```python
 import asyncio
 
-from aioelectricitymaps import ElectricityMaps
+from aioelectricitymaps import ElectricityMaps, ZoneRequest
 
 
 async def main() -> None:
     """Run the example."""
     async with ElectricityMaps(token="abc123") as em:
-        response = await em.latest_carbon_intensity_by_country_code("DE")
+        response = await em.latest_carbon_intensity(ZoneRequest("DE"))
 
-        print(f"Carbon intensity in Germany: {response.data.carbon_intensity} gCO2eq/kWh")
+        print(f"Carbon intensity in Germany: {response.carbon_intensity} gCO2eq/kWh")
 
 
 if __name__ == "__main__":
@@ -48,12 +48,12 @@ functionality. The format of the log is based on
 [Keep a Changelog][keepchangelog].
 
 Releases are based on [Semantic Versioning][semver], and use the format
-of ``MAJOR.MINOR.PATCH``. In a nutshell, the version will be incremented
+of `MAJOR.MINOR.PATCH`. In a nutshell, the version will be incremented
 based on the following:
 
-- ``MAJOR``: Incompatible or major changes.
-- ``MINOR``: Backwards-compatible new features and enhancements.
-- ``PATCH``: Backwards-compatible bugfixes and package updates.
+- `MAJOR`: Incompatible or major changes.
+- `MINOR`: Backwards-compatible new features and enhancements.
+- `PATCH`: Backwards-compatible bugfixes and package updates.
 
 ## Contributing
 
