@@ -15,7 +15,9 @@ from .exceptions import (
     ElectricityMapsInvalidTokenError,
 )
 from .models import (
+    CarbonIntensityHistory,
     HomeAssistantCarbonIntensityResponse,
+    LatestCarbonIntensity,
     LatestPowerBreakdown,
     PowerBreakdownHistory,
     Zone,
@@ -97,6 +99,28 @@ class ElectricityMaps:
             request=request,
         )
         return HomeAssistantCarbonIntensityResponse.from_json(result)
+
+    async def latest_carbon_intensity(
+        self,
+        request: CoordinatesRequest | ZoneRequest,
+    ) -> LatestCarbonIntensity:
+        """Get latest carbon intensity."""
+        result = await self._get(
+            url=ApiEndpoints.LATEST_CARBON_INTENSITY,
+            request=request,
+        )
+        return LatestCarbonIntensity.from_json(result)
+
+    async def carbon_intensity_history(
+        self,
+        request: CoordinatesRequest | ZoneRequest,
+    ) -> CarbonIntensityHistory:
+        """Get carbon intensity history."""
+        result = await self._get(
+            url=ApiEndpoints.HISTORY_CARBON_INTENSITY,
+            request=request,
+        )
+        return CarbonIntensityHistory.from_json(result)
 
     async def latest_power_breakdown(
         self,

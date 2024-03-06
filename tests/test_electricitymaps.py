@@ -172,3 +172,43 @@ async def test_power_breakdown_history(
         )
         == snapshot
     )
+
+
+async def test_latest_carbon_intensity(
+    electricitymaps_client: ElectricityMaps,
+    responses: aioresponses,
+    snapshot: SnapshotAssertion,
+) -> None:
+    """Test latest_power_breakdown."""
+    responses.get(
+        "https://api.electricitymap.org/v3/carbon-intensity/latest?zone=DE",
+        status=200,
+        headers={"Content-Type": "application/json"},
+        body=load_fixture("latest_carbon_intensity.json"),
+    )
+    assert (
+        await electricitymaps_client.latest_carbon_intensity(
+            ZoneRequest("DE"),
+        )
+        == snapshot
+    )
+
+
+async def test_carbon_intensity_history(
+    electricitymaps_client: ElectricityMaps,
+    responses: aioresponses,
+    snapshot: SnapshotAssertion,
+) -> None:
+    """Test power_breakdown_history."""
+    responses.get(
+        "https://api.electricitymap.org/v3/carbon-intensity/history?zone=DE",
+        status=200,
+        headers={"Content-Type": "application/json"},
+        body=load_fixture("carbon_intensity_history.json"),
+    )
+    assert (
+        await electricitymaps_client.carbon_intensity_history(
+            ZoneRequest("DE"),
+        )
+        == snapshot
+    )
