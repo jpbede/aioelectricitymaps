@@ -4,7 +4,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 import logging
 import socket
-from typing import Any, Self
+from typing import TYPE_CHECKING, Self
 
 from aiohttp import ClientError, ClientResponseError, ClientSession
 
@@ -15,6 +15,9 @@ from .exceptions import (
     ElectricityMapsInvalidTokenError,
 )
 from .models import CarbonIntensityResponse, Zone, ZonesResponse
+
+if TYPE_CHECKING:
+    from .request import BaseRequest, CoordinatesRequest, ZoneRequest
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -32,7 +35,7 @@ class ElectricityMaps:
         self,
         *,
         url: str,
-        params: dict[str, Any] | None = None,
+        request: BaseRequest | None = None,
         unauthenticated: bool = False,
     ) -> str:
         """Execute a GET request against the API."""
@@ -42,7 +45,11 @@ class ElectricityMaps:
 
         headers = {} if unauthenticated else {"auth-token": self.token}
 
-        _LOGGER.debug("Doing request: GET %s %s", url, str(params))
+        _LOGGER.debug("Doing request: GET %s %s", url, str(request))
+
+        params = {}
+        if request:
+            params = request.get_request_parameters()
 
         try:
             async with self.session.get(
@@ -74,26 +81,14 @@ class ElectricityMaps:
 
         return response_text
 
-    async def latest_carbon_intensity_by_coordinates(
+    async def latest_carbon_intensity(
         self,
-        lat: str,
-        lon: str,
+        request: CoordinatesRequest | ZoneRequest,
     ) -> CarbonIntensityResponse:
-        """Get carbon intensity by coordinates."""
+        """Get carbon intensity."""
         result = await self._get(
             url=ApiEndpoints.CARBON_INTENSITY,
-            params={"lat": lat, "lon": lon},
-        )
-        return CarbonIntensityResponse.from_json(result)
-
-    async def latest_carbon_intensity_by_country_code(
-        self,
-        code: str,
-    ) -> CarbonIntensityResponse:
-        """Get carbon intensity by country code."""
-        result = await self._get(
-            url=ApiEndpoints.CARBON_INTENSITY,
-            params={"zone": code.upper()},
+            request=request,
         )
         return CarbonIntensityResponse.from_json(result)
 
