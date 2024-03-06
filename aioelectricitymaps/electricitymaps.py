@@ -14,7 +14,7 @@ from .exceptions import (
     ElectricityMapsConnectionTimeoutError,
     ElectricityMapsInvalidTokenError,
 )
-from .models import CarbonIntensityResponse, Zone, ZonesResponse
+from .models import HomeAssistantCarbonIntensityResponse, Zone, ZonesResponse
 
 if TYPE_CHECKING:
     from .request import BaseRequest, CoordinatesRequest, ZoneRequest
@@ -81,16 +81,16 @@ class ElectricityMaps:
 
         return response_text
 
-    async def latest_carbon_intensity(
+    async def carbon_intensity_for_home_assistant(
         self,
         request: CoordinatesRequest | ZoneRequest,
-    ) -> CarbonIntensityResponse:
+    ) -> HomeAssistantCarbonIntensityResponse:
         """Get carbon intensity."""
         result = await self._get(
             url=ApiEndpoints.CARBON_INTENSITY,
             request=request,
         )
-        return CarbonIntensityResponse.from_json(result)
+        return HomeAssistantCarbonIntensityResponse.from_json(result)
 
     async def zones(self) -> dict[str, Zone]:
         """Get a dict of zones where carbon intensity is available."""

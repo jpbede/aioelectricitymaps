@@ -19,7 +19,9 @@ from . import load_fixture
 async def test_json_request_without_session(snapshot: SnapshotAssertion) -> None:
     """Test JSON response is handled correctly without given session."""
     async with ElectricityMaps(token="abc123") as em:
-        assert await em.latest_carbon_intensity(ZoneRequest("DE")) == snapshot
+        assert (
+            await em.carbon_intensity_for_home_assistant(ZoneRequest("DE")) == snapshot
+        )
         assert em.session is not None
 
     assert em.session.closed
@@ -32,7 +34,7 @@ async def test_carbon_intensity_by_coordinates(
 ) -> None:
     """Test carbon_intentsity_by_coordinates with given session."""
     assert (
-        await electricitymaps_client.latest_carbon_intensity(
+        await electricitymaps_client.carbon_intensity_for_home_assistant(
             CoordinatesRequest(
                 lat="53.1357012",
                 lon="8.2024685",
@@ -54,7 +56,9 @@ async def test_catching_client_error(
         body="Boooom!",
     )
     with pytest.raises(ElectricityMapsConnectionError):
-        await electricitymaps_client.latest_carbon_intensity(ZoneRequest("DE"))
+        await electricitymaps_client.carbon_intensity_for_home_assistant(
+            ZoneRequest("DE"),
+        )
 
 
 async def test_zones_request(
@@ -82,7 +86,9 @@ async def test_timeout(
         timeout=True,
     )
     with pytest.raises(ElectricityMapsConnectionTimeoutError):
-        await electricitymaps_client.latest_carbon_intensity(ZoneRequest("DE"))
+        await electricitymaps_client.carbon_intensity_for_home_assistant(
+            ZoneRequest("DE"),
+        )
 
 
 async def test_invalid_token(
@@ -97,7 +103,9 @@ async def test_invalid_token(
         body="",
     )
     with pytest.raises(ElectricityMapsInvalidTokenError):
-        await electricitymaps_client.latest_carbon_intensity(ZoneRequest("DE"))
+        await electricitymaps_client.carbon_intensity_for_home_assistant(
+            ZoneRequest("DE"),
+        )
 
 
 @pytest.mark.parametrize(
@@ -121,4 +129,6 @@ async def test_not_ok_responses(
         body=load_fixture(filename),
     )
     with pytest.raises(expected_exception):
-        await electricitymaps_client.latest_carbon_intensity(ZoneRequest("DE"))
+        await electricitymaps_client.carbon_intensity_for_home_assistant(
+            ZoneRequest("DE"),
+        )
