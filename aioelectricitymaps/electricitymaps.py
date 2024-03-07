@@ -1,4 +1,5 @@
 """Async Python client for electricitymaps.com."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass

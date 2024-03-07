@@ -1,4 +1,5 @@
 """Request model for electricitymaps API."""
+
 from dataclasses import asdict, dataclass
 
 

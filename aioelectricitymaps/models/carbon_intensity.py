@@ -1,4 +1,5 @@
 """Models for the electricitymaps.com carbon intensity API."""
+
 from dataclasses import dataclass, field
 from datetime import datetime
 
