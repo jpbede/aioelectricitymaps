@@ -1,4 +1,5 @@
 """Fixtures for aioelectricitymaps tests."""
+
 from collections.abc import AsyncGenerator, Generator
 import re
 
@@ -46,8 +47,11 @@ def _mock_broken_response(responses: aioresponses) -> None:
 @pytest.fixture(name="electricitymaps_client")
 async def client() -> AsyncGenerator[ElectricityMaps, None]:
     """Return a ElectricityMaps client."""
-    async with aiohttp.ClientSession() as session, ElectricityMaps(
-        token="abc123",
-        session=session,
-    ) as electricitymaps_client:
+    async with (
+        aiohttp.ClientSession() as session,
+        ElectricityMaps(
+            token="abc123",
+            session=session,
+        ) as electricitymaps_client,
+    ):
         yield electricitymaps_client
