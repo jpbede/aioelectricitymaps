@@ -1,4 +1,5 @@
 """ElectricityMaps wrapper."""
+
 from .electricitymaps import ElectricityMaps
 from .exceptions import (
     ElectricityMapsConnectionError,

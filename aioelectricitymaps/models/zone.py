@@ -1,4 +1,5 @@
 """Models for the electricitymaps.com zone API."""
+
 from dataclasses import dataclass, field
 from typing import Any, Self
 

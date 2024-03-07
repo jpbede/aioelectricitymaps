@@ -1,4 +1,5 @@
 """Constants for aioelectricitymaps."""
+
 from enum import StrEnum
 
 API_BASE_URL = "https://api.electricitymap.org/v3"
