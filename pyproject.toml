@@ -27,7 +27,7 @@ mashumaro = ">=3.11"
 orjson = ">=3.9.8"
 
 [tool.poetry.group.dev.dependencies]
-codespell = "2.2.6"
+codespell = "2.3.0"
 covdefaults = "2.3.0"
 coverage = {version = "7.5.1", extras = ["toml"]}
 pylint = "3.2.2"
