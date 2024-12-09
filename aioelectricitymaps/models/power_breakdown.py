@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime  # noqa: TCH003
+from datetime import datetime  # noqa: TC003
 
 from mashumaro import field_options
 from mashumaro.mixins.orjson import DataClassORJSONMixin
