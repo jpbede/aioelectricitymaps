@@ -126,7 +126,7 @@ SOFTWARE.
 
 [build-shield]: https://github.com/jpbede/aioelectricitymaps/actions/workflows/release.yml/badge.svg
 [build]: https://github.com/jpbede/aioelectricitymaps/actions
-[codecov-shield]: https://codecov.io/gh/jpbede/aioelectricitymaps/branch/master/graph/badge.svg
+[codecov-shield]: https://codecov.io/gh/jpbede/aioelectricitymaps/branch/main/graph/badge.svg
 [codecov]: https://codecov.io/gh/jpbede/aioelectricitymaps
 [commits-shield]: https://img.shields.io/github/commit-activity/y/jpbede/aioelectricitymaps.svg
 [commits]: https://github.com/jpbede/aioelectricitymaps/commits/main
