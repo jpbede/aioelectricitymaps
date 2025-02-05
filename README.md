@@ -104,7 +104,7 @@ check [the contributor's page][contributors].
 
 MIT License
 
-Copyright (c) 2023 Jan-Philipp Benecke
+Copyright (c) 2023-2025 Jan-Philipp Benecke
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -134,7 +134,7 @@ SOFTWARE.
 [jpbede]: https://github.com/jpbede
 [keepchangelog]: http://keepachangelog.com/en/1.0.0/
 [license-shield]: https://img.shields.io/github/license/jpbede/aioelectricitymaps.svg
-[maintenance-shield]: https://img.shields.io/maintenance/yes/2024.svg
+[maintenance-shield]: https://img.shields.io/maintenance/yes/2025.svg
 [poetry-install]: https://python-poetry.org/docs/#installation
 [poetry]: https://python-poetry.org
 [pre-commit]: https://pre-commit.com/
