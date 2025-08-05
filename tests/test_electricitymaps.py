@@ -51,7 +51,7 @@ async def test_catching_client_error(
 ) -> None:
     """Test JSON response is handled correctly with given session."""
     responses.get(
-        "https://api.electricitymap.org/v3/home-assistant?zone=DE",
+        "https://api.electricitymaps.com/v3/home-assistant?zone=DE",
         status=500,
         headers={"Content-Type": "application/json"},
         body="Boooom!",
@@ -69,7 +69,7 @@ async def test_zones_request(
 ) -> None:
     """Test zones request."""
     responses.get(
-        "https://api.electricitymap.org/v3/zones",
+        "https://api.electricitymaps.com/v3/zones",
         status=200,
         headers={"Content-Type": "application/json"},
         body=load_fixture("zones.json"),
@@ -83,7 +83,7 @@ async def test_timeout(
 ) -> None:
     """Test request timeout."""
     responses.add(
-        "https://api.electricitymap.org/v3/home-assistant?zone=DE",
+        "https://api.electricitymaps.com/v3/home-assistant?zone=DE",
         timeout=True,
     )
     with pytest.raises(ElectricityMapsConnectionTimeoutError):
@@ -98,7 +98,7 @@ async def test_invalid_token(
 ) -> None:
     """Test invalid token response."""
     responses.get(
-        "https://api.electricitymap.org/v3/home-assistant?zone=DE",
+        "https://api.electricitymaps.com/v3/home-assistant?zone=DE",
         status=401,
         headers={"Content-Type": "application/json"},
         body="",
@@ -124,7 +124,7 @@ async def test_not_ok_responses(
 ) -> None:
     """Test not-ok responses."""
     responses.get(
-        "https://api.electricitymap.org/v3/home-assistant?zone=DE",
+        "https://api.electricitymaps.com/v3/home-assistant?zone=DE",
         status=200,
         headers={"Content-Type": "application/json"},
         body=load_fixture(filename),
@@ -142,7 +142,7 @@ async def test_latest_power_breakdown(
 ) -> None:
     """Test latest_power_breakdown."""
     responses.get(
-        "https://api.electricitymap.org/v3/power-breakdown/latest?zone=DE",
+        "https://api.electricitymaps.com/v3/power-breakdown/latest?zone=DE",
         status=200,
         headers={"Content-Type": "application/json"},
         body=load_fixture("latest_power_breakdown.json"),
@@ -162,7 +162,7 @@ async def test_power_breakdown_history(
 ) -> None:
     """Test power_breakdown_history."""
     responses.get(
-        "https://api.electricitymap.org/v3/power-breakdown/history?zone=DE",
+        "https://api.electricitymaps.com/v3/power-breakdown/history?zone=DE",
         status=200,
         headers={"Content-Type": "application/json"},
         body=load_fixture("power_breakdown_history.json"),
@@ -182,7 +182,7 @@ async def test_latest_carbon_intensity(
 ) -> None:
     """Test latest_power_breakdown."""
     responses.get(
-        "https://api.electricitymap.org/v3/carbon-intensity/latest?zone=DE",
+        "https://api.electricitymaps.com/v3/carbon-intensity/latest?zone=DE",
         status=200,
         headers={"Content-Type": "application/json"},
         body=load_fixture("latest_carbon_intensity.json"),
@@ -202,7 +202,7 @@ async def test_carbon_intensity_history(
 ) -> None:
     """Test power_breakdown_history."""
     responses.get(
-        "https://api.electricitymap.org/v3/carbon-intensity/history?zone=DE",
+        "https://api.electricitymaps.com/v3/carbon-intensity/history?zone=DE",
         status=200,
         headers={"Content-Type": "application/json"},
         body=load_fixture("carbon_intensity_history.json"),
