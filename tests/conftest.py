@@ -23,7 +23,7 @@ def aioresponses_fixture() -> Generator[aioresponses, None, None]:
 def _mock_response(responses: aioresponses) -> None:
     """Mock an API response."""
     url_pattern = re.compile(
-        r"^https://api\.electricitymap\.org/v3/home-assistant\?.*$",
+        r"^https://api\.electricitymaps\.com/v3/home-assistant\?.*$",
     )
     responses.get(
         url_pattern,
@@ -37,7 +37,7 @@ def _mock_response(responses: aioresponses) -> None:
 def _mock_broken_response(responses: aioresponses) -> None:
     """Mock a bad API response."""
     responses.get(
-        "https://api.electricitymap.org/v3/home-assistant",
+        "https://api.electricitymaps.com/v3/home-assistant",
         status=200,
         headers={"Content-Type": "application/json"},
         body='{"status": "ok"',
