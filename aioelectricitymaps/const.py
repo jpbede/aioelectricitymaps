@@ -2,7 +2,7 @@
 
 from enum import StrEnum
 
-API_BASE_URL = "https://api.electricitymap.org/v3"
+API_BASE_URL = "https://api.electricitymaps.com/v3"
 
 
 class ApiEndpoints:
