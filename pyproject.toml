@@ -33,7 +33,7 @@ covdefaults = "2.3.0"
 coverage = {version = "7.10.4", extras = ["toml"]}
 pylint = "3.3.8"
 pytest = "8.4.1"
-pytest-asyncio = "0.26.0"
+pytest-asyncio = "1.1.0"
 pytest-cov = "6.2.1"
 pre-commit = "==4.3.0"
 pre-commit-hooks = "6.0.0"
