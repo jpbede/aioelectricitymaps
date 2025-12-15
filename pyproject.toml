@@ -31,7 +31,7 @@ orjson = ">=3.9.8"
 codespell = "2.4.1"
 covdefaults = "2.3.0"
 coverage = {version = "7.13.0", extras = ["toml"]}
-pylint = "3.3.9"
+pylint = "4.0.4"
 pytest = "8.4.2"
 pytest-asyncio = "1.3.0"
 pytest-cov = "6.3.0"
