@@ -41,7 +41,7 @@ mypy = "2.1.0"
 ruff = "0.15.22"
 syrupy = "5.5.3"
 yamllint = "1.38.0"
-aioresponses = "0.7.8"
+aioresponses = "0.7.9"
 
 [tool.poetry.urls]
 "Bug Tracker" = "https://github.com/jpbede/aioelectricitymaps/issues"
